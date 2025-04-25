@@ -72,4 +72,18 @@ Install [stow](https://www.gnu.org/software/stow/manual/):
 sudo apt install stow
 ```
 
+To install a nerd font, [download](https://www.nerdfonts.com/font-downloads) into the download folder. Then run the following:
+```zsh
+mkdir -p ~/.local/share/fonts
+unzip ~/Downloads/FiraCode.zip -d ~/.local/share/fonts
+fc-cache -fv
+```
+
+Might want some tools for Neovim packages:
+```zsh
+sudo apt-get install ripgrep
+sudo apt install fd-find
+sudo apt install fzf
+```
+
 That is the basic install.
