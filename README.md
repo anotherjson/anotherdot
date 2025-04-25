@@ -17,12 +17,12 @@ sudo apt install wezterm
 Now open wezTerm.
 
 For [zsh](https://www.zsh.org/):
-`bash
+```bash
 sudo apt update
 sudo apt install zsh
 chsh -s /bin/zsh
 exec "$SHELL"
-`
+```
 
 For [omz](https://ohmyz.sh/#install):
 ```zsh
@@ -70,11 +70,6 @@ sudo apt install neovim
 Install stow:
 ```zsh
 sudo apt install stow
-mkdir dotfiles
-cd ~/dotfiles
-cp ~/.zshrc .
-mv ~/.zshrc ~/.zshrc.bak
-stow .
 ```
 
 That is the basic install.
