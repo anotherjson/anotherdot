@@ -67,7 +67,7 @@ Install neovim basics:
 sudo apt install neovim
 ```
 
-Install stow:
+Install [stow](https://www.gnu.org/software/stow/manual/):
 ```zsh
 sudo apt install stow
 ```
