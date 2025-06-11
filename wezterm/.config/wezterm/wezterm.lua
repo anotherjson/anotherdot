@@ -1,14 +1,20 @@
 -- Pull in the wezterm API
 local wezterm = require("wezterm")
+-- return {
+-- 	enable_wayland = false,
+-- }
 
 -- This will hold the configuration.
---local config = wezterm.config_builder()
+-- local config = wezterm.config_builder()
 local config = {}
 
 -- This is where you actually apply your config choices
 -- For example, changing the color scheme:
 config.color_scheme_dirs = { "~/.config/wezterm/colors" }
 config.color_scheme = "Solarized Osaka Night"
+
+-- This is where you add the window_decorations setting
+config.window_decorations = "RESIZE"
 config.font = wezterm.font("FiraCode Nerd Font")
 config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
 config.keys = {
