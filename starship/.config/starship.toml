@@ -160,13 +160,16 @@ vimcmd_symbol = "[<](color_green)"
 
 [os]
 disabled = false
-style = "bg:color_bg fg:color_fg"
+# style = "bg:color_bg fg:color_fg"
+style = "fg:color_fg"
 
 [username]
 show_always = true
-style_user = "bg:color_bg fg:color_fg"
-style_root = "bg:color_bg fg:color_fg"
-format = '[ $user|](bold $style)'
+# style_user = "bg:color_bg fg:color_fg"
+style_user = "fg:color_fg"
+# style_root = "bg:color_bg fg:color_fg"
+style_root = "fg:color_fg"
+format = '[ $user⎪](bold $style)'
 
 [directory]
 home_symbol = "⌂"
