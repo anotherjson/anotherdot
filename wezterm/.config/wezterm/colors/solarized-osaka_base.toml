@@ -11,7 +11,6 @@ selection_fg = "#00141A"
 ansi = ["#586E75", "#664D00", "#A13C11", "#B7211F", "#494FB6", "#1B6497", "#1A6265", "#596600"]   
 brights = ["#FDF6E3", "#FFE999", "#FF9468", "#FF9D9B", "#CCCFFF", "#AADCFF", "#B9FFFA", "#D6FFAC"]
 
-
 [colors.tab_bar]
 inactive_tab_edge = "#103956"
 background = "#1B6497"
