@@ -11,7 +11,7 @@ local config = {}
 -- This is where you actually apply your config choices
 -- For example, changing the color scheme:
 config.color_scheme_dirs = { "~/.config/wezterm/colors" }
-config.color_scheme = "Solarized Osaka Night"
+config.color_scheme = "Solarized Osaka Base"
 
 -- This is where you add the window_decorations setting
 config.window_decorations = "RESIZE"
