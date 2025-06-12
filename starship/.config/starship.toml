@@ -1,51 +1,180 @@
 format = """
-[  ](fg:color_fg bg:color_bg)\
+$os\
+$sudo\
+$username\
+$localip\
+$hostname\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$shlvl\
+$shell\
+$env_var\
+$jobs\
+$line_break\
+$character"""
+
+right_format = """
+$singularity\
 $nodejs\
 $rust\
 $golang\
 $php\
-$time\
-$username\
-$hostname\
-$directory\
-$git_branch\
-$git_state\
-$git_status\
-$cmd_duration\
-$line_break\
+$kubernetes\
+$vcsh\
+$fossil_branch\
+$hg_branch\
+$pijul_channel\
+$docker_context\
+$package\
+$c\
+$cpp\
+$cmake\
+$cobol\
+$daml\
+$dart\
+$deno\
+$dotnet\
+$elixir\
+$elm\
+$erlang\
+$fennel\
+$golang\
+$guix_shell\
+$haskell\
+$haxe\
+$helm\
+$java\
+$julia\
+$kotlin\
+$gradle\
+$lua\
+$nim\
+$nodejs\
+$ocaml\
+$opa\
+$perl\
+$php\
+$pulumi\
+$purescript\
 $python\
-$character"""
+$raku\
+$rlang\
+$red\
+$ruby\
+$rust\
+$scala\
+$solidity\
+$swift\
+$terraform\
+$vlang\
+$vagrant\
+$zig\
+$buf\
+$conda\
+$pixi\
+$meson\
+$spack\
+$aws\
+$gcloud\
+$openstack\
+$azure\
+$crystal\
+$memory_usage\
+$status\
+$cmd_duration\
+$battery\
+$time"""
 
 palette = 'solarized_osaka'
 
 [palettes.solarized_osaka]
-color_fg = '#c0caf5'
-color_bg = '#1a1b26'
-color_blue = '#7aa2f7' #7dcfff #15161e #458588
-color_aqua = '#689d6a'
-color_green = '#9ece6a'
-color_orange = '#d65d0e'
-color_purple = '#bb9af7' #b16286
-color_red = '#f7768e' #cc241d
-color_yellow = '#e0af68' #d79921
-color_white = '#a9b1d6'
+color_base000 = '#9EACAD' # grey_grey_grey_grey
+color_base001 = '#ADB8B8' # grey_grey_grey_white
+color_base002 = '#EEE8D5' # grey_grey_white_white
+color_base003 = '#FDF6E3' # grey_white_white_white
+color_fg = '#FDF6E3' # grey_white_white_white
+color_base004 = '#FFFFFF' # white_white_white_white
+color_white = '#FFFFFF' # white_white_white_white
+color_base00x = '#657B83' # grey_grey_grey_grey
+color_base01x = '#586E75' # grey_grey_grey_black
+color_base02x = '#073642' # grey_grey_black_black
+color_base03x = '#002B36' # grey_black_black_black
+color_base04x = '#00141A' # black_black_black_black
+color_bg = '#00141A' # black_black_black_black
+color_green100 = '#D6FFAC' # green_green_green_white
+color_green = '#D6FFAC' # green_green_green_white
+color_green300 = '#BAFB00' # green_green_green_green
+color_green500 = '#859900' # green_green_green_black
+color_green700 = '#596600' # green_green_black_black
+color_green900 = '#2C3300' # green_black_black_black
+color_cyan100 = '#B9FFFA' # cyan_cyan_cyan_white
+color_aqua = '#B9FFFA' # cyan_cyan_cyan_white
+color_cyan300 = '#29EEDF' # cyan_cyan_cyan_cyan
+color_cyan500 = '#2AA198' # cyan_cyan_cyan_black
+color_cyan700 = '#1A6265' # cyan_cyan_black_black
+color_cyan900 = '#103B3D' # cyan_black_black_black
+color_blue100 = '#AADCFF' # blue_blue_blue_white
+color_blue = '#AADCFF' # blue_blue_blue_white
+color_blue300 = '#49AEF5' # blue_blue_blue_blue
+color_blue500 = '#268BD2' # blue_blue_blue_black
+color_blue700 = '#1B6497' # blue_blue_black_black
+color_blue900 = '#103956' # blue_black_black_black
+color_violet100 = '#CCCFFF' # violet_violet_violet_white
+color_purple = '#CCCFFF' # violet_violet_violet_white
+color_violet300 = '#9CA0ED' # violet_violet_violet_violet
+color_violet500 = '#6C71C4' # violet_violet_violet_black
+color_violet700 = '#494FB6' # violet_violet_black_black
+color_violet900 = '#25285B' # violet_black_black_black
+color_magenta100 = '#FF77B9' # magenta_magenta_magenta_white
+color_magenta = '#FF77B9' # magenta_magenta_magenta_white
+color_magenta300 = '#F255A1' # magenta_magenta_magenta_magenta
+color_magenta500 = '#D33682' # magenta_magenta_magenta_black
+color_magenta700 = '#B02669' # magenta_magenta_black_black
+color_magenta900 = '#541232' # magenta_black_black_black
+color_red100 = '#FF9D9B' # red_red_red_white
+color_red = '#FF9D9B' # red_red_red_white
+color_red300 = '#F6524F' # red_red_red_red
+color_red500 = '#DC322F' # red_red_red_black
+color_red700 = '#B7211F' # red_red_black_black
+color_red900 = '#57100F' # red_black_black_black
+color_orange100 = '#FF9468' # orange_orange_orange_white
+color_orange = '#FF9468' # orange_orange_orange_white
+color_orange300 = '#F8520E' # orange_orange_orange_orange
+color_orange500 = '#CB4B16' # orange_orange_orange_black
+color_orange700 = '#A13C11' # orange_orange_black_black
+color_orange900 = '#5C220A' # orange_black_black_black
+color_yellow100 = '#FFE999' # yellow_yellow_yellow_white
+color_yellow = '#FFE999' # yellow_yellow_yellow_white
+color_yellow300 = '#FFC100' # yellow_yellow_yellow_yellow
+color_yellow500 = '#B58900' # yellow_yellow_yellow_black
+color_yellow700 = '#664D00' # yellow_yellow_black_black
+color_yellow900 = '#332700' # yellow_black_black_black
+
+[character]
+success_symbol = "[>](color_green)"
+error_symbol = "[x](color_red)"
+vimcmd_symbol = "[<](color_green)"
 
 [os]
 disabled = false
-style = "bg:color_fg fg:color_yellow"
+style = "bg:color_bg fg:color_fg"
 
 [username]
 show_always = true
 style_user = "bg:color_bg fg:color_fg"
 style_root = "bg:color_bg fg:color_fg"
-format = '[ $user ]($style)'
+format = '[ $user|](bold $style)'
 
 [directory]
+home_symbol = "⌂"
 read_only = " 󰌾"
-style = "color_fg"
-format = "[ $path ]($style)"
-truncation_length = 3
-truncation_symbol = "…/"
+style = "color_purple"
+format = "[ $path ]($style)[$read_only]($read_only_style)"
+# truncation_length = 3
+# truncation_symbol = "…/"
 
 [directory.substitutions]
 "Documents" = "󰈙 "
@@ -53,39 +182,94 @@ truncation_symbol = "…/"
 "Music" = " "
 "Pictures" = " "
 
-[character]
-success_symbol = "[>](color_green)"
-error_symbol = "[x](color_red)"
-vimcmd_symbol = "[<](color_green)"
-
 [git_state]
-format = "[$branch]($style)"
-style = "color_purple"
+style = "color_yellow"
+format = "[ $branch ]($style)"
 
 [git_status]
-format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
-style = "color_aqua"
-ahead = ">"
-behind = "<"
-diverged = "<>"
-renamed = "r"
-deleted = "x"
+style = "bold color_blue"
+format = "([⎪$ahead_behind$staged$modified$untracked$renamed$deleted$conflicted$stashed⎥]($style))"
+conflicted = "[◪◦](italic color_magenta)"
+ahead = "[▴│[${count}](bold white)│](italic color_green)"
+behind = "[▿│[${count}](bold white)│](italic color_red)"
+diverged = "[◇ ▴┤[${ahead_count}](regular color_white)│▿┤[${behind_count}](regular color_white)│](italic color_magenta)"
+untracked = "[◌◦](italic color_yellow)"
+stashed = "[◃◈](italic color_white)"
+modified = "[●◦](italic color_yellow)"
+staged = "[▪┤[$count](bold color_white)│](italic color_aqua)"
+renamed = "[◎◦](italic color_blue)"
+deleted = "[✕](italic color_red)"
 
 [git_branch]
-format = "[$branch]($style)"
-style = "color_yellow"
-symbol = " "
+style = "italic color_blue"
+format = " [$symbol $branch(:$remote_branch)]($style)"
+symbol = "[](bold italic color_blue)"
 
 [git_commit]
+style = "color_yellow"
 tag_symbol = '  '
 
+[git_metrics]
+format = '([▴$added]($added_style))([▿$deleted]($deleted_style))'
+added_style = 'italic dimmed color_green'
+deleted_style = 'italic dimmed color_red'
+ignore_submodules = true
+disabled = false
+
+[sudo]
+format = "[ $symbol]($style)"
+style = "bold italic color_purple"
+symbol = "⋈┈"
+disabled = false
+
+[jobs]
+format = "[$symbol$number]($style) "
+style = "color_white"
+symbol = "[▶](color_blue italic)"
+
+[localip]
+ssh_only = false
+format = "[$localipv4](dimmed color_yellow)"
+disabled = false
+
 [cmd_duration]
-format = "[$duration]($style) "
-style = "color_yellow"
+format = "[◄ $duration ](italic color_fg)"
+
+[time]
+disabled = false
+format = "[ $time]($style)"
+time_format = "%R"
+utc_time_offset = "local"
+style = "italic dimmed color_fg"
+
+[battery]
+format = "[ $percentage $symbol]($style)"
+full_symbol = "█"
+charging_symbol = "[↑](italic bold color_green)"
+discharging_symbol = "↓"
+unknown_symbol = "░"
+empty_symbol = "▃"
+
+[[battery.display]]
+threshold = 20
+style = "italic bold color_red"
+
+[[battery.display]]
+threshold = 60
+style = "italic dimmed color_purple"
+
+[[battery.display]]
+threshold = 70
+style = "italic dimmed color_yellow"
+
+[[battery.display]]
+threshold = 100
+style = "italic dimmed color_green"
 
 [python]
-format = "[$virtualenv]($style) "
-style = "color_yellow"
+format = " [py](italic) [${symbol}${version}:${virtualenv}]($style)"
+version_format = "${raw}"
+style = "bold color_yellow"
 symbol = " "
 
 [aws]
@@ -165,6 +349,9 @@ symbol = " "
 
 [lua]
 symbol = " "
+format = " [lua](italic) [${symbol}${version}]($style)"
+version_format = "${raw}"
+style = "bold color_yellow"
 
 [memory_usage]
 symbol = "󰍛 "
