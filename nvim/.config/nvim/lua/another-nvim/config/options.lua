@@ -50,3 +50,7 @@ opt.updatetime = 50
 opt.colorcolumn = "88"
 
 g.python3_host_prog = "/home/anotherjson/.pyenv/versions/neovim/bin/python"
+
+-- ignore hererocks and luarocks
+-- opt.rocks.hererocks = false
+-- opt.rocks.enabled = false
