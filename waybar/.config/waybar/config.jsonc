@@ -7,8 +7,8 @@
     // "spacing": 4, // Gaps between modules (4px)
     // Choose the order of the modules
     "modules-left": [
-        "hyprland/workspaces",
-        "hyprland/mode",
+        "hyprland/workspaces"
+        // "hyprland/mode",
     ],
     "modules-center": [
         "hyprland/window",
@@ -16,10 +16,11 @@
     "modules-right": [
         // "mpd",
         // "idle_inhibitor",
+        // "custom/weather",
+        "tray",
         "pulseaudio",
         // "power-profiles-daemon",
-        "tray",
-        "keyboard-state",
+        // "keyboard-state",
         "cpu",
         "memory",
         "temperature",
@@ -28,7 +29,6 @@
         "battery",
         // "battery#bat2",
         "clock"
-        // ,
         // "custom/power"
     ],
     // Modules configuration
@@ -44,24 +44,24 @@
     //          "active": "",
     //      }
     // },
-    "keyboard-state": {
-        "numlock": false,
-        "capslock": true,
-        "format": "{name} {icon}",
-        "format-icons": {
-            "locked": "",
-            "unlocked": ""
-        }
-    },
-    "hyprland/mode": {
-        "format": "<span style=\"italic\">{}</span>"
-    },
+    // "keyboard-state": {
+    //     "numlock": false,
+    //     "capslock": true,
+    //     "format": "{name} {icon}",
+    //     "format-icons": {
+    //         "locked": "",
+    //         "unlocked": "",
+    //     }
+    // },
+    // "hyprland/mode": {
+    //     "format": "<span style=\"italic\">{}</span>",
+    // },
     "hyprland/scratchpad": {
         "format": "{icon} {count}",
         "show-empty": false,
         "format-icons": ["", ""],
         "tooltip": true,
-        "tooltip-format": "{app}: {title}"
+        "tooltip-format": "{app}: {title}",
     },
     // "mpd": {
     //     "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}% ",
@@ -125,7 +125,8 @@
         // "format-critical": "{temperatureC}°C {icon}",
         // "format": "{temperatureC}°C {icon}",
         "format": "<span size='13000'>{icon} </span> {temperatureC}°C",
-        "format-icons": ["", "", ""]
+        "format-icons": ["", "", ""],
+        "format-alt": "<span size='13000'>{icon} </span> {temperatureF}°F",
     },
     "backlight": {
         // "device": "acpi_video1",
@@ -138,7 +139,7 @@
         "states": {
             // "good": 95,
             "warning": 30,
-            "critical": 15
+            "critical": 15,
         },
         // "format": "{capacity}% {icon}",
         // "format-full": "{capacity}% {icon}",
@@ -149,11 +150,12 @@
         // // "format-full": "",
         // "format-icons": ["", "", "", "", ""]
         "format": "<span size='13000'>{icon} </span> {capacity}%",
+        "format-alt": "<span size='13000'>{icon} </span> {time}",
+        "format-full": "<span size='13000'> </span>{capacity}%",
         "format-warning": "<span size='13000'>{icon} </span> {capacity}%",
         "format-critical": "<span size='13000'>{icon} </span> {capacity}%",
         "format-charging": "<span size='13000'> </span>{capacity}%",
         "format-plugged": "<span size='13000'> </span>{capacity}%",
-        "format-alt": "<span size='13000'>{icon} </span> {time}",
         "format-full": "<span size='13000'> </span>{capacity}%",
         "format-icons": ["", "", "", "", ""],
         "tooltip-format": "{time}"
@@ -204,7 +206,7 @@
             "car": "",
             "default": ["", "", ""]
         },
-        "on-click": "pavucontrol"
+        "on-click": "pavucontrol",
     },
     // "custom/media": {
     //     "format": "{icon} {text}",
@@ -218,16 +220,23 @@
     //     "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
     //     // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
     // },
-		//   "custom/power": {
-		//       "format" : "⏻ ",
-		// "tooltip": false,
-		// "menu": "on-click",
-		// "menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
-		// "menu-actions": {
-		// 	"shutdown": "shutdown",
-		// 	"reboot": "reboot",
-		// 	"suspend": "systemctl suspend",
-		// 	"hibernate": "systemctl hibernate"
-		// }
-		//   }
+	// "custom/power": {
+	//        "format" : "⏻ ",
+	// 	"tooltip": false,
+	// 	"menu": "on-click",
+	// 	"menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
+	// 	"menu-actions": {
+	// 		"shutdown": "shutdown",
+	// 		"reboot": "reboot",
+	// 		"suspend": "systemctl suspend",
+	// 		"hibernate": "systemctl hibernate"
+	// 	},
+	// },
+    // "custom/weather": {
+    //     "exec": "${HOME}/.config/waybar/scripts/get_weather.sh Denver+Colorado",
+    //     "return-type": "json",
+    //     "format": "{}",
+    //     "tooltip": true,
+    //     "interval": 3600
+    // }
 }

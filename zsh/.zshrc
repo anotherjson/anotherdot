@@ -88,11 +88,10 @@ plugins=(
     git 
     charm
  #   docker
- 
     fzf
  #   poetry
  #   poetry-env
- #   pyenv
+    pyenv
  #   pylint
     python
     ssh
@@ -139,6 +138,7 @@ alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias ls="eza -alhmu --group-directories-first --total-size --git --git-repos"
 alias yaysuy="yay -Suy"
+alias news="arch-update -n"
 
 # Pyenv setup
 export PYENV_ROOT="$HOME/.pyenv"
