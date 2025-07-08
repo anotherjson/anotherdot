@@ -10,8 +10,12 @@
         "hyprland/workspaces"
         // "hyprland/mode",
     ],
+    // "modules-center": [
+    //     "hyprland/window",
+    // ],
     "modules-center": [
-        "hyprland/window",
+        // "hyprland/window",
+        "clock"
     ],
     "modules-right": [
         // "mpd",
@@ -26,9 +30,9 @@
         "temperature",
         "backlight",
         "network",
-        "battery",
+        "battery"
         // "battery#bat2",
-        "clock"
+        // "clock"
         // "custom/power"
     ],
     // Modules configuration
@@ -56,13 +60,13 @@
     // "hyprland/mode": {
     //     "format": "<span style=\"italic\">{}</span>",
     // },
-    "hyprland/scratchpad": {
-        "format": "{icon} {count}",
-        "show-empty": false,
-        "format-icons": ["", ""],
-        "tooltip": true,
-        "tooltip-format": "{app}: {title}",
-    },
+    // "hyprland/scratchpad": {
+    //     "format": "{icon} {count}",
+    //     "show-empty": false,
+    //     "format-icons": ["", ""],
+    //     "tooltip": true,
+    //     "tooltip-format": "{app}: {title}",
+    // },
     // "mpd": {
     //     "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}% ",
     //     "format-disconnected": "Disconnected ",
@@ -232,11 +236,11 @@
 	// 		"hibernate": "systemctl hibernate"
 	// 	},
 	// },
-    // "custom/weather": {
-    //     "exec": "${HOME}/.config/waybar/scripts/get_weather.sh Denver+Colorado",
-    //     "return-type": "json",
-    //     "format": "{}",
-    //     "tooltip": true,
-    //     "interval": 3600
-    // }
+    "custom/weather": {
+        "exec": "${HOME}/.config/waybar/scripts/get_weather.sh Denver+Colorado",
+        "return-type": "json",
+        "format": "{}",
+        "tooltip": true,
+        "interval": 3600
+    }
 }
