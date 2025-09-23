@@ -163,3 +163,5 @@ fi
 
 # starship
 eval "$(starship init zsh)"
+
+alias claude="/home/anotherjson/.claude/local/claude"

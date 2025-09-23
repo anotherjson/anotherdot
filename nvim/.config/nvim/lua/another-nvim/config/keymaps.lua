@@ -57,14 +57,14 @@ keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) 
 keymap.set("n", "<leader>tb", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
 
 -- window management
-keymap.set("n", "<leader>sv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
-keymap.set("n", "<leader>ss", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
-keymap.set("n", "<leader>se", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
-keymap.set("n", "<leader>sw", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
-keymap.set("n", "<leader>sh", "<C-w>h", { desc = "Move window left" })
-keymap.set("n", "<leader>sj", "<C-w>j", { desc = "Move window down" })
-keymap.set("n", "<leader>sk", "<C-w>k", { desc = "Move window up" })
-keymap.set("n", "<leader>sl", "<C-w>l", { desc = "Move window right" })
+keymap.set({ "t", "n" }, "<leader>sv", "<C-w>v", { desc = "Split window vertically" }) -- split window vertically
+keymap.set({ "t", "n" }, "<leader>ss", "<C-w>s", { desc = "Split window horizontally" }) -- split window horizontally
+keymap.set({ "t", "n" }, "<leader>se", "<C-w>=", { desc = "Make splits equal size" }) -- make split windows equal width & height
+keymap.set("n", "<leader>sc", "<cmd>close<CR>", { desc = "Close current split" }) -- close current split window
+keymap.set({ "t", "n" }, "<leader>sh", "<C-w>h", { desc = "Move window left" })
+keymap.set({ "t", "n" }, "<leader>sj", "<C-w>j", { desc = "Move window down" })
+keymap.set({ "t", "n" }, "<leader>sk", "<C-w>k", { desc = "Move window up" })
+keymap.set({ "t", "n" }, "<leader>sl", "<C-w>l", { desc = "Move window right" })
 keymap.set("n", "<leader>sH", "<C-w>5<", { desc = "Resize window left" })
 keymap.set("n", "<leader>sJ", "<C-w>5-", { desc = "Resize window down" })
 keymap.set("n", "<leader>sK", "<C-w>5+", { desc = "Resize window up" })

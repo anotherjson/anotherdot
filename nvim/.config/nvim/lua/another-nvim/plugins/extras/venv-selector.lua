@@ -7,7 +7,7 @@ return {
 		{ "nvim-telescope/telescope.nvim", branch = "0.1.x", dependencies = { "nvim-lua/plenary.nvim" } },
 	},
 	lazy = false, -- Optional: needed only if you want to type `:VenvSelect` without a keymapping
-	branch = "regexp",
+	branch = "main",
 	config = function()
 		require("venv-selector").setup({
 			-- Your options go here
