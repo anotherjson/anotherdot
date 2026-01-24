@@ -11,6 +11,9 @@ return {
 			lua = { "selene" },
 			python = { "pylint" },
 			sql = { "sqlfluff" },
+			svelte = { "eslint_d" },
+			javascript = { "eslint_d" },
+			typescript = { "eslint_d" },
 		}
 
 		local lint_augroup = api.nvim_create_augroup("lint", { clear = true })

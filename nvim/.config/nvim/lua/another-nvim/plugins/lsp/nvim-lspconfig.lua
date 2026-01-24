@@ -106,5 +106,20 @@ return {
 				},
 			},
 		})
+
+		lspconfig.svelte.setup({
+			capabilities = capabilities,
+			on_attach = function(client, bufnr)
+				-- Your standard on_attach keybindings here
+
+				-- Optional: Update on save for Svelte files if not handled by conform/autocmds
+				vim.api.nvim_create_autocmd("BufWritePre", {
+					buffer = bufnr,
+					callback = function()
+						vim.lsp.buf.format({ async = false })
+					end,
+				})
+			end,
+		})
 	end,
 }
