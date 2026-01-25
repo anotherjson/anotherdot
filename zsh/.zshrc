@@ -164,5 +164,4 @@ fi
 # starship
 eval "$(starship init zsh)"
 
-alias claude="/home/anotherjson/.claude/local/claude"
 source /usr/share/nvm/init-nvm.sh
