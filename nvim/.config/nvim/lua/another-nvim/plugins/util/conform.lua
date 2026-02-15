@@ -7,11 +7,11 @@ return {
 
 		conform.setup({
 			formatters_by_ft = {
-				svelte = { "prettier" },
 				javascript = { "prettier" },
 				typescript = { "prettier" },
 				javascriptreact = { "prettier" },
 				typescriptreact = { "prettier" },
+				svelte = { "prettier" },
 				css = { "prettier" },
 				html = { "prettier" },
 				json = { "prettier" },
@@ -21,6 +21,13 @@ return {
 				lua = { "stylua" },
 				sql = { "sqlfmt" },
 				python = { "black" },
+				go = { "gofumpt" },
+				sh = { "beautysh" },
+			},
+			formatters = {
+				black = {
+					prepend_args = { "--line-length", "88" },
+				},
 			},
 			format_on_save = {
 				lsp_fallback = true,

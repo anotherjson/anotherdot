@@ -6,8 +6,8 @@ return {
 		"mfussenegger/nvim-dap-python", --optional
 		{ "nvim-telescope/telescope.nvim", branch = "0.1.x", dependencies = { "nvim-lua/plenary.nvim" } },
 	},
-	lazy = false, -- Optional: needed only if you want to type `:VenvSelect` without a keymapping
-	branch = "main",
+	lazy = true, -- Lazy load on keymap (loads on <leader>vs or <leader>vc)
+	-- branch = "regexp",
 	config = function()
 		require("venv-selector").setup({
 			-- Your options go here
@@ -16,6 +16,14 @@ return {
 			auto_refresh = true,
 			dap_enabled = true,
 			poetry_path = "~/Library/Caches/pypoetry/virtualenvs",
+
+			-- Notify on venv change (allows other plugins to react)
+			changed_venv_hooks = {
+				function(venv_path, venv_python)
+					-- Trigger custom event that DAP will listen to
+					vim.api.nvim_exec_autocmds("User", { pattern = "VenvSelectPost" })
+				end,
+			},
 		})
 	end,
 	keys = {

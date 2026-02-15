@@ -6,19 +6,48 @@ return {
 
 		configs.setup({
 			ensure_installed = {
-				"lua",
+				-- Essential
 				"vim",
 				"vimdoc",
+				"lua",
 				"query",
-				"html",
+
+				-- Actively used languages
 				"python",
+				"go",
+				"javascript",
+				"typescript",
 				"sql",
-				"markdown",
-                "markdown_inline",
-				"norg",
-				"c",
 				"bash",
+				"c",
+				"rust",
+				"svelte",
+
+				-- Markup/Config
+				"markdown",
 				"json",
+				"yaml",
+				"toml",
+				"html",
+				"css",
+
+				-- Git
+				"git_config",
+				"git_rebase",
+				"gitcommit",
+				"gitignore",
+				"gitattributes",
+
+				-- Data/DevOps
+				"csv",
+				"dockerfile",
+				"terraform",
+
+				-- Note-taking
+				"norg",
+
+				-- Other
+				"diff",
 				"regex",
 			},
 			sync_install = false,
