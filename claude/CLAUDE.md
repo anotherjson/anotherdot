@@ -1,4 +1,6 @@
 - use `exa -la` instead of `ls -la`
 - use a functional programing paradigm
-- Always read documentation in the @.claude directory, read all documentation in the project, and study the directory structure 
+- Always read documentation in the @.claude directory, read all documentation in the project, and study the directory structure
 - use git switch -c to create a new branch. use git switch to change branch
+- always use uv to run python, not global python
+- Use the existing shell and uv when running python scripts.
