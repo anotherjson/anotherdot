@@ -2,6 +2,17 @@ return {
 	"mfussenegger/nvim-lint",
 	lazy = true,
 	event = { "BufReadPre", "BufNewFile" }, -- to disable, comment this out
+	opts = {
+		linters = {
+			sqlfluff = {
+				args = {
+					"lint",
+					"--format=json",
+					"-",
+				},
+			},
+		},
+	},
 	config = function()
 		local lint = require("lint")
 		local api = vim.api
@@ -11,6 +22,11 @@ return {
 			lua = { "selene" },
 			python = { "pylint" },
 			sql = { "sqlfluff" },
+			go = { "golangci-lint" },
+			javascript = { "eslint_d" },
+			typescript = { "eslint_d" },
+			javascriptreact = { "eslint_d" },
+			typescriptreact = { "eslint_d" },
 		}
 
 		local lint_augroup = api.nvim_create_augroup("lint", { clear = true })

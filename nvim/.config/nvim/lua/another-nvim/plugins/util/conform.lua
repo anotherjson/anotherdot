@@ -21,6 +21,13 @@ return {
 				lua = { "stylua" },
 				sql = { "sqlfmt" },
 				python = { "black" },
+				go = { "gofumpt" },
+				sh = { "beautysh" },
+			},
+			formatters = {
+				black = {
+					prepend_args = { "--line-length", "88" },
+				},
 			},
 			format_on_save = {
 				lsp_fallback = true,

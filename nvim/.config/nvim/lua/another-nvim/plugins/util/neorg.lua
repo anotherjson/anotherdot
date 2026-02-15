@@ -5,6 +5,9 @@ return {
 	ft = { "norg" },
 	version = "*",
 	config = function()
+		local wo = vim.wo
+		local keymap = vim.keymap
+
 		require("neorg").setup({
 			load = {
 				["core.defaults"] = {},
@@ -31,8 +34,8 @@ return {
 				},
 			},
 		})
-		vim.wo.foldlevel = 99
-		vim.wo.conceallevel = 2
-		vim.keymap.set("n", "<localleader>nt", { desc = "Create New Today Entry" })
+		wo.foldlevel = 99
+		wo.conceallevel = 2
+		keymap.set("n", "<localleader>nt", "<Plug>(neorg.dirman.new-note)", { desc = "Create New Today Entry" })
 	end,
 }

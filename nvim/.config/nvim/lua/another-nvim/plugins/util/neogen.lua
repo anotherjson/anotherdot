@@ -7,6 +7,7 @@ return {
 	-- version = "*"
 	config = function()
 		local neogen = require("neogen")
+		local api = vim.api
 
 		neogen.setup({
 			enabled = true, --if you want to disable Neogen
@@ -16,7 +17,7 @@ return {
 				noremap = true,
 				silent = true,
 			},
-			vim.api.nvim_set_keymap(
+			api.nvim_set_keymap(
 				"n",
 				"<leader>nf",
 				":lua require('neogen').generate()<CR>",

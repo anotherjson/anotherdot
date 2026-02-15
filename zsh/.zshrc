@@ -86,13 +86,12 @@ ZSH_THEME="ys"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     git 
- #   charm
+    charm
  #   docker
- 
- # fzf
+    fzf
  #   poetry
  #   poetry-env
- #   pyenv
+    pyenv
  #   pylint
     python
     ssh
@@ -138,12 +137,14 @@ alias e="$EDITOR"
 alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias ls="eza -alhmu --group-directories-first --total-size --git --git-repos"
+alias yaysuy="yay -Suy"
+alias news="arch-update -n"
 
 # Pyenv setup
-# export PYENV_ROOT="$HOME/.pyenv"
-# [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-# eval "$(pyenv init - zsh)"
-# eval "$(pyenv virtualenv-init -)"
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
+eval "$(pyenv virtualenv-init -)"
 
 # Nvm
 # export NVM_DIR="$HOME/.nvm"
@@ -154,5 +155,13 @@ alias ls="eza -alhmu --group-directories-first --total-size --git --git-repos"
 export MANROFFOPT="-c"
 export MANPAGER="less -R --use-color -Dd+r -Du+b"
 
+# Fix profile sourcing
+# Fix for unreliable profile sourcing, eg. switching to a second TTY
+if [[ -z "$PROFILE_SOURCED" ]]; then
+    source ~/.zprofile
+fi
+
 # starship
 eval "$(starship init zsh)"
+
+source /usr/share/nvm/init-nvm.sh
