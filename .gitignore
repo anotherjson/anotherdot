@@ -1,6 +1,9 @@
 # Stow ignore
 .stow-local-ignore
 
+# Claude credentials — never commit
+claude/.credentials.json
+
 # Some other repos for reference
 blues*/
 

@@ -118,3 +118,17 @@ poetry completions zsh > $ZSH_CUSTOM/plugins/poetry/_poetry
 Add poetry to the `.zshrc` plugins list
 
 That is the basic install.
+
+## Claude Code config
+
+Claude Code has [known symlink bugs](https://github.com/anthropics/claude-code/issues/764) that prevent GNU Stow from managing `~/.claude/`. Symlinked `CLAUDE.md` becomes invisible and `settings.json` causes permission failures. Instead, the `claude/` package uses **copy-based deployment** via a justfile.
+
+The `dots` alias (defined in `.zshrc`) lets you run recipes from anywhere:
+
+```zsh
+dots claude-status   # check what differs between repo and live
+dots claude-diff     # full diff output
+dots claude-pull     # copy live ~/.claude/ changes into the repo
+dots claude-deploy   # copy repo configs → ~/.claude/
+dots deploy-all      # stow all packages + deploy claude config
+```

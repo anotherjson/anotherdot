@@ -138,6 +138,7 @@ alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias ls="eza -alhmu --group-directories-first --total-size --git --git-repos"
 alias yaysuy="yay -Suy"
+alias dots="just --justfile ~/.dotfiles/justfile --working-directory ~/.dotfiles"
 alias news="arch-update -n"
 
 # Pyenv setup

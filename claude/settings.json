@@ -1,0 +1,20 @@
+{
+  "feedbackSurveyState": {
+    "lastShownTime": 1754090505960
+  },
+  "mcpServers": {
+    "ducklake": {
+      "command": "mcp-server-ducklake",
+      "args": [
+        "--env-file",
+        "/home/anotherjson/Workspace/steffy_fantasy_football/.env"
+      ],
+      "cwd": "/home/anotherjson/Workspace/steffy_fantasy_football"
+    }
+  },
+  "effortLevel": "high",
+  "statusLine": {
+    "type": "command",
+    "command": "bash /home/anotherjson/.claude/statusline-command.sh"
+  }
+}
