@@ -31,7 +31,7 @@ return {
 				"sqlls",
 				"pylsp",
 				"bashls",
-				"gopls",
+				-- "gopls",
 				"ts_ls",
 				"svelte",
 			},
@@ -44,18 +44,18 @@ return {
 				"prettier", -- prettier formatter
 				"stylua", -- lua formatter
 				"black", -- python formatter
-				"gofumpt", -- go formatter
+				-- "gofumpt", -- go formatter
 				"pylint", -- python linter
 				"debugpy", -- python debugger
 				"selene", -- lua linter
 				"sqlfmt", -- sql formatter
 				"sqlfluff", -- sql linter
-				"golangci-lint", -- go linter (meta-linter with 50+ linters)
+				-- "golangci-lint", -- go linter (meta-linter with 50+ linters)
 				"eslint_d", -- javascript/typescript linter (daemon mode)
 				"xmlformatter", -- xml formatter
 				"beautysh", -- bash formatter
 				"shellcheck", -- bash linter
-				"delve", -- go debugger
+				-- "delve", -- go debugger
 			},
 		})
 	end,

@@ -129,20 +129,20 @@ return {
 			},
 		})
 
-		-- Go language server
-		lsp.config("gopls", {
-			capabilities = capabilities,
-			on_attach = on_attach,
-			settings = {
-				gopls = {
-					analyses = {
-						unusedparams = true,
-						shadow = true,
-					},
-					gofumpt = true,
-				},
-			},
-		})
+		-- -- Go language server
+		-- lsp.config("gopls", {
+		-- 	capabilities = capabilities,
+		-- 	on_attach = on_attach,
+		-- 	settings = {
+		-- 		gopls = {
+		-- 			analyses = {
+		-- 				unusedparams = true,
+		-- 				shadow = true,
+		-- 			},
+		-- 			gofumpt = true,
+		-- 		},
+		-- 	},
+		-- })
 
 		-- SQL language server
 		lsp.config("sqlls", {
@@ -183,7 +183,8 @@ return {
 		})
 
 		-- Enable the configured servers
-		local servers = { "lua_ls", "pylsp", "gopls", "ts_ls", "svelte", "sqlls", "bashls" }
+		-- local servers = { "lua_ls", "pylsp", "gopls", "ts_ls", "svelte", "sqlls", "bashls" }
+		local servers = { "lua_ls", "pylsp", "ts_ls", "svelte", "sqlls", "bashls" }
 		for _, server in ipairs(servers) do
 			lsp.enable(server)
 		end
