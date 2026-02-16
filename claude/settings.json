@@ -1,20 +1,74 @@
 {
-  "feedbackSurveyState": {
-    "lastShownTime": 1754090505960
-  },
-  "mcpServers": {
-    "ducklake": {
-      "command": "mcp-server-ducklake",
-      "args": [
-        "--env-file",
-        "/home/anotherjson/Workspace/steffy_fantasy_football/.env"
-      ],
-      "cwd": "/home/anotherjson/Workspace/steffy_fantasy_football"
-    }
-  },
   "effortLevel": "high",
   "statusLine": {
     "type": "command",
     "command": "bash /home/anotherjson/.claude/statusline-command.sh"
-  }
+  },
+  "env": {
+    "UV_PYTHON_PREFERENCE": "only-managed"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(eza *)",
+      "Bash(exa *)",
+      "Bash(uv *)",
+      "Bash(cargo *)",
+      "Bash(ruff *)",
+      "Bash(pytest *)",
+      "Bash(gh *)",
+      "Bash(jq *)",
+      "Bash(just *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(pnpm *)",
+      "Read",
+      "Glob",
+      "Grep",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(sudo rm *)",
+      "Bash(chmod 777 *)",
+      "Bash(curl * | bash)",
+      "Bash(wget * | bash)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/anotherjson/.claude/hooks/block-sensitive-files.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/anotherjson/.claude/hooks/notify.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/anotherjson/.claude/hooks/notify-stop.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "mcpServers": {}
 }

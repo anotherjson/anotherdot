@@ -7,12 +7,14 @@ claude_repo := dotfiles / "claude"
 
 # Copy repo configs → ~/.claude/
 claude-deploy:
-    @mkdir -p "{{claude_live}}/agents"
+    @mkdir -p "{{claude_live}}/agents" "{{claude_live}}/hooks" "{{claude_live}}/skills"
     @cp "{{claude_repo}}/CLAUDE.md" "{{claude_live}}/CLAUDE.md"
     @cp "{{claude_repo}}/settings.json" "{{claude_live}}/settings.json"
     @cp "{{claude_repo}}/settings.local.json" "{{claude_live}}/settings.local.json"
     @cp "{{claude_repo}}/statusline-command.sh" "{{claude_live}}/statusline-command.sh"
     @cp "{{claude_repo}}"/agents/*.md "{{claude_live}}/agents/"
+    @cp "{{claude_repo}}"/hooks/*.sh "{{claude_live}}/hooks/"
+    @cp -r "{{claude_repo}}"/skills/* "{{claude_live}}/skills/"
     @echo "claude config deployed to ~/.claude/"
 
 # Copy ~/.claude/ configs → repo
@@ -22,6 +24,8 @@ claude-pull:
     @test -f "{{claude_live}}/settings.local.json" && cp "{{claude_live}}/settings.local.json" "{{claude_repo}}/settings.local.json" || true
     @cp "{{claude_live}}/statusline-command.sh" "{{claude_repo}}/statusline-command.sh"
     @cp "{{claude_live}}"/agents/*.md "{{claude_repo}}/agents/"
+    @test -d "{{claude_live}}/hooks" && cp "{{claude_live}}"/hooks/*.sh "{{claude_repo}}/hooks/" || true
+    @test -d "{{claude_live}}/skills" && cp -r "{{claude_live}}"/skills/* "{{claude_repo}}/skills/" || true
     @echo "claude config pulled into repo"
 
 # Show full diff between repo and live configs
@@ -31,6 +35,8 @@ claude-diff:
     @diff -ru "{{claude_repo}}/settings.local.json" "{{claude_live}}/settings.local.json" 2>/dev/null || true
     @diff -ru "{{claude_repo}}/statusline-command.sh" "{{claude_live}}/statusline-command.sh" || true
     @diff -ru "{{claude_repo}}/agents" "{{claude_live}}/agents" || true
+    @diff -ru "{{claude_repo}}/hooks" "{{claude_live}}/hooks" 2>/dev/null || true
+    @diff -ru "{{claude_repo}}/skills" "{{claude_live}}/skills" 2>/dev/null || true
 
 # Quick summary of what differs
 claude-status:
@@ -43,9 +49,19 @@ claude-status:
             echo "repo only: $f"; changed=1
         fi
     done
-    agent_diff=$(diff -rq "{{claude_repo}}/agents" "{{claude_live}}/agents"  2>/dev/null) || true
+    agent_diff=$(diff -rq "{{claude_repo}}/agents" "{{claude_live}}/agents" 2>/dev/null) || true
     if [ -n "$agent_diff" ]; then
         echo "$agent_diff" | while read -r line; do echo "changed: agents/ — $line"; done
+        changed=1
+    fi
+    hooks_diff=$(diff -rq "{{claude_repo}}/hooks" "{{claude_live}}/hooks" 2>/dev/null) || true
+    if [ -n "$hooks_diff" ]; then
+        echo "$hooks_diff" | while read -r line; do echo "changed: hooks/ — $line"; done
+        changed=1
+    fi
+    skills_diff=$(diff -rq "{{claude_repo}}/skills" "{{claude_live}}/skills" 2>/dev/null) || true
+    if [ -n "$skills_diff" ]; then
+        echo "$skills_diff" | while read -r line; do echo "changed: skills/ — $line"; done
         changed=1
     fi
     [ "$changed" -eq 0 ] && echo "in sync" || true
