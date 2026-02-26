@@ -1,0 +1,54 @@
+{
+  "selectedAuthType": "oauth-personal",
+  "theme": "ANSI",
+  "preferredEditor": "neovim",
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    },
+    "enablePermanentToolApproval": true,
+    "enableLocalHistory": true
+  },
+  "general": {
+    "vimMode": true,
+    "sessionRetention": {
+      "enabled": true,
+      "maxAge": "30d",
+      "warningAcknowledged": true
+    },
+    "enablePromptCompletion": true,
+    "defaultApprovalMode": "default"
+  },
+  "ui": {
+    "autoThemeSwitching": true,
+    "showStatusInTitle": true,
+    "dynamicWindowTitle": true,
+    "hideContextSummary": false,
+    "footer": {
+      "hideCWD": false,
+      "hideContextPercentage": false
+    },
+    "showCitations": true,
+    "showModelInfoInChat": true,
+    "showUserIdentity": true,
+    "accessibility": {
+      "enableLoadingPhrases": false
+    },
+    "theme": "Shades Of Purple"
+  },
+  "context": {
+    "loadMemoryFromIncludeDirectories": true,
+    "fileFiltering": {
+      "respectGitIgnore": false
+    }
+  },
+  "tools": {
+    "shell": {
+      "showColor": true
+    },
+    "approvalMode": "default"
+  },
+  "experimental": {
+    "plan": true
+  }
+}
