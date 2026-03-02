@@ -34,7 +34,8 @@
     "accessibility": {
       "enableLoadingPhrases": false
     },
-    "theme": "Shades Of Purple"
+    "theme": "Shades Of Purple",
+    "loadingPhrases": "off"
   },
   "context": {
     "loadMemoryFromIncludeDirectories": true,
@@ -50,5 +51,8 @@
   },
   "experimental": {
     "plan": true
+  },
+  "model": {
+    "name": "gemini-3.1-pro-preview"
   }
 }
