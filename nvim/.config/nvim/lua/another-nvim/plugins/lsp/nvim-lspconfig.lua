@@ -144,12 +144,6 @@ return {
 		-- 	},
 		-- })
 
-		-- SQL language server
-		lsp.config("sqlls", {
-			capabilities = capabilities,
-			on_attach = on_attach,
-		})
-
 		-- Bash language server
 		lsp.config("bashls", {
 			capabilities = capabilities,
@@ -184,7 +178,7 @@ return {
 
 		-- Enable the configured servers
 		-- local servers = { "lua_ls", "pylsp", "gopls", "ts_ls", "svelte", "sqlls", "bashls" }
-		local servers = { "lua_ls", "pylsp", "ts_ls", "svelte", "sqlls", "bashls" }
+		local servers = { "lua_ls", "pylsp", "ts_ls", "svelte", "bashls" }
 		for _, server in ipairs(servers) do
 			lsp.enable(server)
 		end

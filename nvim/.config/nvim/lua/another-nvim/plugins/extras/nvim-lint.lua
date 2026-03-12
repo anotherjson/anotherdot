@@ -2,17 +2,6 @@ return {
 	"mfussenegger/nvim-lint",
 	lazy = true,
 	event = { "BufReadPre", "BufNewFile" }, -- to disable, comment this out
-	opts = {
-		linters = {
-			sqlfluff = {
-				args = {
-					"lint",
-					"--format=json",
-					"-",
-				},
-			},
-		},
-	},
 	config = function()
 		local lint = require("lint")
 		local api = vim.api
