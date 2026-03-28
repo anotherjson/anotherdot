@@ -1,9 +1,4 @@
 {
-  "effortLevel": "high",
-  "statusLine": {
-    "type": "command",
-    "command": "bash /home/anotherjson/.claude/statusline-command.sh"
-  },
   "env": {
     "UV_PYTHON_PREFERENCE": "only-managed"
   },
@@ -49,26 +44,13 @@
         ]
       }
     ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash /home/anotherjson/.claude/hooks/notify.sh"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash /home/anotherjson/.claude/hooks/notify-stop.sh"
-          }
-        ]
-      }
-    ]
+    "Notification": [],
+    "Stop": []
   },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /home/anotherjson/.claude/statusline-command.sh"
+  },
+  "effortLevel": "high",
   "mcpServers": {}
 }

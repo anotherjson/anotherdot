@@ -1,0 +1,160 @@
+# Claude Code statusline — rendered by Starship with solarized_osaka theme
+
+format = """
+$os\
+$sudo\
+$directory\
+${env_var.CLAUDE_MODEL_ICON}\
+${env_var.CLAUDE_CTX_GREEN}\
+${env_var.CLAUDE_CTX_YELLOW}\
+${env_var.CLAUDE_CTX_RED}\
+${env_var.CLAUDE_RATE}\
+${env_var.CLAUDE_COST}\
+${env_var.CLAUDE_SESSION}\
+$git_branch\
+$git_status"""
+
+palette = 'solarized_osaka'
+
+# --- System ---
+[os]
+disabled = false
+style = "fg:color_fg"
+
+[sudo]
+format = "[ $symbol]($style)"
+style = "bold italic color_purple"
+symbol = "⋈┈"
+disabled = false
+
+[directory]
+home_symbol = "⌂"
+read_only = " 󰌾"
+style = "bold fg:color_fg"
+format = "[$path]($style)[⎪ ](bold fg:color_fg)[$read_only]($read_only_style)"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = false
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+# --- Git ---
+
+[git_branch]
+style = "italic color_blue"
+format = " [$symbol $branch(:$remote_branch)]($style)"
+symbol = "[](bold italic color_blue)"
+
+[git_status]
+style = "bold color_blue"
+format = "([⎪$ahead_behind$staged$modified$untracked$renamed$deleted$conflicted$stashed⎥]($style))"
+conflicted = "[◪◦](italic color_magenta)"
+ahead = "[▴│[${count}](bold white)│](italic color_green)"
+behind = "[▿│[${count}](bold white)│](italic color_red)"
+diverged = "[◇ ▴┤[${ahead_count}](regular color_white)│▿┤[${behind_count}](regular color_white)│](italic color_magenta)"
+untracked = "[◌◦](italic color_yellow)"
+stashed = "[◃◈](italic color_white)"
+modified = "[●◦](italic color_yellow)"
+staged = "[▪┤[$count](bold color_white)│](italic color_aqua)"
+renamed = "[◎◦](italic color_blue)"
+deleted = "[✕](italic color_red)"
+
+# --- Claude env_var modules ---
+
+[env_var.CLAUDE_MODEL_ICON]
+format = "[$env_value ](dimmed color_aqua)"
+
+[env_var.CLAUDE_CTX_GREEN]
+format = "[c:${env_value}%](dimmed color_green) "
+
+[env_var.CLAUDE_CTX_YELLOW]
+format = "[c:${env_value}%](dimmed color_yellow) "
+
+[env_var.CLAUDE_CTX_RED]
+format = "[c:${env_value}%](bold color_red) "
+
+[env_var.CLAUDE_RATE]
+format = "[r:${env_value}% ](dimmed color_yellow)"
+
+[env_var.CLAUDE_COST]
+format = "[$env_value ](dimmed color_blue)"
+
+[env_var.CLAUDE_SESSION]
+format = "[\\[$env_value\\]](dimmed color_fg)"
+
+# --- Solarized Osaka palette (copied from main starship.toml) ---
+[palettes.solarized_osaka]
+color_base000 = '#9EACAD'
+color_base001 = '#ADB8B8'
+color_base002 = '#EEE8D5'
+color_base003 = '#FDF6E3'
+color_fg = '#FDF6E3'
+color_base004 = '#FFFFFF'
+color_white = '#FFFFFF'
+color_base00x = '#657B83'
+color_base01x = '#586E75'
+color_base02x = '#073642'
+color_base03x = '#002B36'
+color_base04x = '#00141A'
+color_bg = '#00141A'
+color_green = '#D6FFAC'
+color_aqua = '#B9FFFA'
+color_blue = '#AADCFF'
+color_blue300 = '#49AEF5'
+color_purple = '#CCCFFF'
+color_magenta = '#FF77B9'
+color_red = '#FF9D9B'
+color_yellow = '#FFE999'
+color_orange = '#FF9468'
+
+# --- Symbols ---
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+AlmaLinux = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CachyOS = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+Nobara = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Void = " "
+Windows = "󰍲 "
