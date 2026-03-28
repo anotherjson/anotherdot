@@ -46,8 +46,7 @@
   "tools": {
     "shell": {
       "showColor": true
-    },
-    "approvalMode": "default"
+    }
   },
   "experimental": {
     "plan": true

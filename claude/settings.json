@@ -1,9 +1,4 @@
 {
-  "effortLevel": "high",
-  "statusLine": {
-    "type": "command",
-    "command": "bash /home/anotherjson/.claude/statusline-command.sh"
-  },
   "env": {
     "UV_PYTHON_PREFERENCE": "only-managed"
   },
@@ -70,5 +65,10 @@
       }
     ]
   },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /home/anotherjson/.claude/statusline-command.sh"
+  },
+  "effortLevel": "high",
   "mcpServers": {}
 }
