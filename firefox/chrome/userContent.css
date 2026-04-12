@@ -1,0 +1,8 @@
+/* Solarized Osaka — theme internal Firefox pages */
+
+@-moz-document url-prefix(about:newtab), url-prefix(about:blank), url-prefix(about:home) {
+  body {
+    background-color: #00141A !important;
+    color: #FDF6E3 !important;
+  }
+}

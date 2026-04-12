@@ -119,6 +119,22 @@ Add poetry to the `.zshrc` plugins list
 
 That is the basic install.
 
+## Firefox config
+
+Firefox uses `userChrome.css` (via [Cascade](https://github.com/cascadefox/cascade)) for Solarized Osaka UI theming. Can't use stow because the profile path contains a random ID, so it's symlink-based.
+
+**One-time setup** — enable custom stylesheets in `about:config`:
+```
+toolkit.legacyUserProfileCustomizations.stylesheets = true
+```
+
+**Deploy** — link the `chrome/` directory into your Firefox profile:
+```zsh
+dots firefox-deploy
+```
+
+Restart Firefox to apply.
+
 ## Claude Code config
 
 Claude Code has [known symlink bugs](https://github.com/anthropics/claude-code/issues/764) that prevent GNU Stow from managing `~/.claude/`. Symlinked `CLAUDE.md` becomes invisible and `settings.json` causes permission failures. Instead, the `claude/` package uses **copy-based deployment** via a justfile.

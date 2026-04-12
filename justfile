@@ -69,6 +69,16 @@ claude-status:
     fi
     [ "$changed" -eq 0 ] && echo "in sync" || true
 
+# ── Firefox config (symlink-based, not stow) ─────────────────────
+
+# Link firefox/chrome/ into the active Firefox profile
+firefox-deploy:
+    #!/usr/bin/env bash
+    profile=$(find ~/.mozilla/firefox -maxdepth 1 -name "*.default-release" -type d | head -1)
+    if [ -z "$profile" ]; then echo "no firefox profile found"; exit 1; fi
+    ln -sfn "{{dotfiles}}/firefox/chrome" "$profile/chrome"
+    echo "firefox chrome/ linked to $profile/chrome"
+
 # ── Stow wrappers ─────────────────────────────────────────────────
 
 # Stow a single package
@@ -93,5 +103,5 @@ stow-all:
     done
     echo "all packages stowed"
 
-# Full deploy: stow all packages + deploy claude config
-deploy-all: stow-all claude-deploy
+# Full deploy: stow all packages + deploy claude + firefox config
+deploy-all: stow-all claude-deploy firefox-deploy
