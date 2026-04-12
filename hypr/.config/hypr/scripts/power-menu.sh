@@ -8,7 +8,7 @@ choice=$(printf '%s\n'  \
     "  Logout"           \
     "  Reboot"           \
     "  Shutdown"         \
-    | wofi --dmenu --prompt "power" --width 220 --height 280 --cache-file /dev/null)
+    | wofi --dmenu --prompt "power" --cache-file /dev/null)
 
 case "${choice##* }" in
     Lock)      loginctl lock-session ;;

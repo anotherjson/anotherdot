@@ -103,19 +103,11 @@
     // },
     "custom/swaync": {
         "tooltip": true,
-        "format": "{} {icon}",
-        "format-icons": {
-            "notification": "<span foreground='red'><sup></sup></span>",
-            "none": "",
-            "dnd-notification": "<span foreground='red'><sup></sup></span>",
-            "dnd-none": ""
-        },
+        "format": "<span size='13000'>󰂚 </span> {}",
         "return-type": "json",
-        "exec-if": "which swaync-client",
         "exec": "swaync-client -swb",
         "on-click": "swaync-client -t -sw",
-        "on-click-right": "swaync-client -d -sw",
-        "escape": true
+        "on-click-right": "swaync-client -d -sw"
     },
     "tray": {
         // "icon-size": 21,
