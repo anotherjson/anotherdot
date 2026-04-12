@@ -92,7 +92,7 @@ notificationwindow, blankwindow {
   border: var(--border);
   padding: 0;
   transition: var(--hover-tranistion);
-  background: rgba(var(--noti-bg), var(--noti-bg-alpha));
+  background: rgba(0, 43, 54, 0.7);
 }
 
 .notification-row .notification-background .notification.low {
@@ -236,7 +236,14 @@ notificationwindow, blankwindow {
 }
 
 .notification-group {
+  background: rgba(0, 43, 54, 0.7);
+  border: var(--border);
+  border-radius: var(--border-radius);
   transition: opacity 200ms ease-in-out;
+}
+
+.notification-group:hover {
+  background: var(--noti-bg-hover);
 }
 
 .notification-group:focus {
@@ -266,7 +273,7 @@ notificationwindow, blankwindow {
 }
 
 .notification-group.collapsed .notification-row .notification {
-  background-color: rgba(var(--noti-bg), 1);
+  background: rgba(0, 43, 54, 0.7);
 }
 
 .notification-group.collapsed .notification-row:not(:last-child) .notification-action,
@@ -275,14 +282,14 @@ notificationwindow, blankwindow {
 }
 
 .notification-group.collapsed:hover .notification-row:not(:only-child) .notification {
-  background-color: var(--noti-bg-hover);
+  background: var(--noti-bg-hover);
 }
 
 .control-center {
-  background: var(--cc-bg);
+  background: transparent;
   color: var(--text-color);
   border-radius: var(--border-radius);
-  border: var(--border);
+  border: none;
 }
 
 .control-center .control-center-list-placeholder {
@@ -326,6 +333,22 @@ notificationwindow, blankwindow {
   border-radius: var(--border-radius);
 }
 
+.widget-title {
+  background: rgba(0, 43, 54, 0.7);
+  border: var(--border);
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+  margin: 8px 18px 0 18px;
+  transition: var(--hover-tranistion);
+}
+
+.widget-title:hover {
+  background: var(--noti-bg-hover);
+}
+
 .widget-title > label {
   margin-right: 8px;
   font-size: 1.3rem;
@@ -342,6 +365,22 @@ notificationwindow, blankwindow {
 
 .widget-title > button:hover {
   background: rgba(var(--noti-bg), 1);
+}
+
+.widget-dnd {
+  background: rgba(0, 43, 54, 0.7);
+  border: var(--border);
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+  border-top: none;
+  margin: 0 18px 8px 18px;
+  transition: var(--hover-tranistion);
+}
+
+.widget-dnd:hover {
+  background: var(--noti-bg-hover);
 }
 
 .widget-dnd label {
