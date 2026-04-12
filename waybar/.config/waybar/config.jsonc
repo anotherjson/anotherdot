@@ -22,6 +22,7 @@
         // "idle_inhibitor",
         // "custom/weather",
         "tray",
+        "custom/swaync",
         "pulseaudio",
         // "power-profiles-daemon",
         // "keyboard-state",
@@ -100,6 +101,22 @@
     //         "deactivated": ""
     //     }
     // },
+    "custom/swaync": {
+        "tooltip": true,
+        "format": "{} {icon}",
+        "format-icons": {
+            "notification": "<span foreground='red'><sup></sup></span>",
+            "none": "",
+            "dnd-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-none": ""
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
+    },
     "tray": {
         // "icon-size": 21,
         "spacing": 10,
