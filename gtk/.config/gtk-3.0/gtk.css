@@ -4,11 +4,11 @@
  */
 
 /* -- Surface colors ---------------------------------------- */
-@define-color window_bg_color #00141A;
+@define-color window_bg_color #001419;
 @define-color window_fg_color #FDF6E3;
 @define-color view_bg_color #002B36;
 @define-color view_fg_color #FDF6E3;
-@define-color headerbar_bg_color #073642;
+@define-color headerbar_bg_color #001419;
 @define-color headerbar_fg_color #FDF6E3;
 @define-color headerbar_backdrop_color @window_bg_color;
 @define-color popover_bg_color #073642;
@@ -17,7 +17,7 @@
 @define-color dialog_fg_color #FDF6E3;
 @define-color card_bg_color #073642;
 @define-color card_fg_color #FDF6E3;
-@define-color sidebar_bg_color #073642;
+@define-color sidebar_bg_color #001419;
 @define-color sidebar_fg_color #FDF6E3;
 @define-color sidebar_backdrop_color @window_bg_color;
 @define-color sidebar_shade_color rgba(0, 0, 0, 0.25);
