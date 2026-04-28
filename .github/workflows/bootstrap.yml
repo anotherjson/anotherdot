@@ -15,7 +15,7 @@ jobs:
       image: ghcr.io/greyltc-org/archlinux-aur:yay
       options: --user 0
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: dotfiles
 
