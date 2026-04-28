@@ -1,0 +1,51 @@
+name: bootstrap
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/greyltc-org/archlinux-aur:yay
+      options: --user ab
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: dotfiles
+
+      - name: Move repo to ~/.dotfiles
+        run: mv "$GITHUB_WORKSPACE/dotfiles" "$HOME/.dotfiles"
+
+      - name: Install non-GUI subset
+        run: |
+          sudo pacman -Syu --noconfirm --needed \
+            stow just git jq curl zsh starship neovim
+
+      - name: Verify full package list resolves (download-only)
+        run: |
+          cd "$HOME/.dotfiles"
+          pkgs=$(just --show install-deps \
+                  | sed -n '/yay -S/,$p' \
+                  | sed '1d' \
+                  | tr -d '\\' \
+                  | xargs)
+          echo "Validating: $pkgs"
+          yay -Sw --needed --noconfirm $pkgs
+
+      - name: Fake firefox profile
+        run: mkdir -p "$HOME/.mozilla/firefox/test.default-release"
+
+      - name: First deploy-all
+        run: cd "$HOME/.dotfiles" && just deploy-all
+
+      - name: Assert deploy outcomes
+        run: bash "$HOME/.dotfiles/.github/workflows/assert-bootstrap.sh"
+
+      - name: Second deploy-all (idempotency)
+        run: cd "$HOME/.dotfiles" && just deploy-all
+
+      - name: Re-assert after second run
+        run: bash "$HOME/.dotfiles/.github/workflows/assert-bootstrap.sh"
