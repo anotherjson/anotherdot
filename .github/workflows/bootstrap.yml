@@ -23,8 +23,9 @@ jobs:
 
       - name: Move repo to ~ab/.dotfiles and chown
         run: |
+          mkdir -p "$AB_HOME"
           mv "$GITHUB_WORKSPACE/dotfiles" "$AB_HOME/.dotfiles"
-          chown -R ab:ab "$AB_HOME/.dotfiles"
+          chown -R ab:ab "$AB_HOME"
 
       - name: Install non-GUI subset
         run: |
