@@ -1,150 +1,107 @@
-# Base setup for a new computer
+# anotherdot
 
-TODO: write up description
+Dotfiles for an Arch Linux + Hyprland desktop, themed [Solarized Osaka].
+Managed with [GNU Stow], with a few special-case deploys (Claude, Firefox)
+driven by [`just`].
 
-## Ubuntu setup
+[Solarized Osaka]: https://github.com/craftzdog/solarized-osaka.nvim
+[GNU Stow]: https://www.gnu.org/software/stow/manual/
+[`just`]: https://github.com/casey/just
 
-The goal of the ubuntu setup is to install zsh, wezterm, neovim, pyenv, and python.
+## Layout
 
-We're going to want these anyway:
+Each top-level directory is a stow package mirroring its target path inside
+`$HOME`.
 
-```bash
-sudo apt install git wget curl
-```
+| Package | Configures |
+|---|---|
+| `hypr` | Hyprland window manager — keybinds, idle/lock, scripts |
+| `waybar` | Status bar |
+| `wofi` | App launcher / power menu |
+| `kitty` | Terminal (primary) |
+| `wezterm` | Terminal (alternate) |
+| [`nvim`](nvim/README.md) | Neovim |
+| `zsh` | `.zshrc`, aliases |
+| `starship` | Shell prompt |
+| `gtk` | GTK 3/4 + libadwaita theming |
+| `firefox` | userChrome / userContent (symlink-based — see below) |
+| [`claude`](claude/README.md) | Claude Code config (copy-based) |
+| `gemini` | Gemini CLI config |
+| `backgrounds` | Wallpapers |
 
-For [wezTerm](https://wezterm.org/installation.html):
+Platform-specific setup quicknotes live in [`guides/`](guides/):
+- [`guides/arch.md`](guides/arch.md) — Arch nvim/pyenv quicknotes
+- [`guides/macbook-air-ubuntu.md`](guides/macbook-air-ubuntu.md) — legacy
+  MacBook Air on Ubuntu
 
-```bash
-sudo apt update
-sudo apt install wezterm
-```
+## Theming
 
-Now open wezTerm.
+All apps share the [Solarized Osaka] palette — pinned upstream by
+`craftzdog/solarized-osaka.nvim` for nvim, mirrored by hand into kitty, wezterm,
+waybar, wofi, swaync, gtk, and firefox userChrome. Window transparency is set
+via Hyprland `windowrule = opacity` (not per-app rgba), since most apps don't
+composite alpha through to the desktop. Font is FiraCode Nerd Font everywhere
+for glyph parity in waybar/wofi/kitty.
 
-For [zsh](https://www.zsh.org/):
+## Bootstrap
 
-```bash
-sudo apt update
-sudo apt install zsh
-chsh -s /bin/zsh
-exec "$SHELL"
-```
-
-For [omz](https://ohmyz.sh/#install):
-
-```zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-```
-
-If one happens to be on a macbook repurposed for linux:
-
-```zsh
-echo "options hid_apple fnmode=2" | sudo tee /etc/modprobe.d/hid_apple.conf
-sudo update-initramfs -u
-```
-
-Install [pyenv](https://github.com/pyenv/pyenv):
-
-```zsh
-curl -fsSL https://pyenv.run | bash
-echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
-echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
-echo 'eval "$(pyenv init - zsh)"' >> ~/.zshrc
-echo 'eval "$(pyenv virtualenv-init -)" >> ~/.zshrc
-echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zprofile
-echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zprofile
-echo 'eval "$(pyenv init - zsh)"' >> ~/.zprofile
-exec "$SHELL"
-sudo apt update; sudo apt install build-essential libssl-dev zlib1g-dev \
-libbz2-dev libreadline-dev libsqlite3-dev curl git \
-libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
-```
-
-Now install python3:
+Install everything this repo configures or references (Arch):
 
 ```zsh
-pyenv install 3
-pyenv global 3
+yay -S hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland \
+       waybar wofi swaync pavucontrol pipewire wireplumber \
+       kitty wezterm neovim zsh starship \
+       adw-gtk-theme ttf-firacode-nerd \
+       stow just git
 ```
 
-Setup neovim virtualenv:
+Clone the repo:
 
 ```zsh
-pyenv virtualenv neovim
+git clone https://github.com/anotherjson/anotherdot.git ~/.dotfiles
 ```
 
-Install neovim basics:
+Add the `dots` alias so you can run recipes from anywhere (already in
+`zsh/.zshrc` once that package is stowed):
 
 ```zsh
-sudo apt install neovim
+alias dots="just --justfile ~/.dotfiles/justfile --working-directory ~/.dotfiles"
 ```
 
-Install [stow](https://www.gnu.org/software/stow/manual/):
+Deploy everything:
 
 ```zsh
-sudo apt install stow
+dots deploy-all
 ```
 
-To install a nerd font, [download](https://www.nerdfonts.com/font-downloads) into the download folder. Then run the following:
+This runs `stow-all` (links every stow package into `$HOME`), then
+`claude-deploy` and `firefox-deploy` for the special-case configs.
+
+## Day-to-day commands
 
 ```zsh
-mkdir -p ~/.local/share/fonts
-unzip ~/Downloads/FiraCode.zip -d ~/.local/share/fonts
-fc-cache -fv
+dots stow <pkg>      # stow a single package
+dots restow <pkg>    # unstow + stow (after package changes)
+dots unstow <pkg>    # remove the symlinks
+dots stow-all        # stow every package (skips claude/, guides/)
+dots deploy-all      # stow-all + claude-deploy + firefox-deploy
 ```
-
-Might want some tools for Neovim packages
-
-```zsh
-sudo apt-get install ripgrep
-sudo apt install fd-find
-sudo apt install fzf
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-export NVM_DIR="$HOME/.nvm" >> ~/.zshrc
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm >> ~/.zshrc
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion >> ~/.zshrc
-nvm install --lts
-nvm use --lts
-```
-
-We'll want [poetry](https://python-poetry.org/) or some python package manager:
-
-```zsh
-curl -sSL https://install.python-poetry.org | python3 -
-mkdir $ZSH_CUSTOM/plugins/poetry
-poetry completions zsh > $ZSH_CUSTOM/plugins/poetry/_poetry
-```
-
-Add poetry to the `.zshrc` plugins list
-
-That is the basic install.
 
 ## Firefox config
 
-Firefox uses `userChrome.css` (via [Cascade](https://github.com/cascadefox/cascade)) for Solarized Osaka UI theming. Can't use stow because the profile path contains a random ID, so it's symlink-based.
+Firefox uses `userChrome.css` for Solarized Osaka UI theming. It can't be
+stowed because the profile path contains a random ID, so it's symlink-based.
 
 **One-time setup** — enable custom stylesheets in `about:config`:
+
 ```
 toolkit.legacyUserProfileCustomizations.stylesheets = true
 ```
 
-**Deploy** — link the `chrome/` directory into your Firefox profile:
+**Deploy** — link `firefox/chrome/` into your active profile:
+
 ```zsh
 dots firefox-deploy
 ```
 
 Restart Firefox to apply.
-
-## Claude Code config
-
-Claude Code has [known symlink bugs](https://github.com/anthropics/claude-code/issues/764) that prevent GNU Stow from managing `~/.claude/`. Symlinked `CLAUDE.md` becomes invisible and `settings.json` causes permission failures. Instead, the `claude/` package uses **copy-based deployment** via a justfile.
-
-The `dots` alias (defined in `.zshrc`) lets you run recipes from anywhere:
-
-```zsh
-dots claude-status   # check what differs between repo and live
-dots claude-diff     # full diff output
-dots claude-pull     # copy live ~/.claude/ changes into the repo
-dots claude-deploy   # copy repo configs → ~/.claude/
-dots deploy-all      # stow all packages + deploy claude config
-```
