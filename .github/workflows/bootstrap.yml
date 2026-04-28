@@ -40,19 +40,14 @@ jobs:
         run: |
           runuser -u ab -- bash -lc '
             cd "$HOME/.dotfiles"
-            pkgs=$(just --show install-deps \
-                    | sed -n "/yay -S/,\$p" \
-                    | sed "1d" \
-                    | tr -d "\\" \
-                    | xargs)
-            echo "Validating: $pkgs"
             failed=0
-            for p in $pkgs; do
+            while read -r p; do
+              [ -z "$p" ] && continue
               if ! yay -Si "$p" >/dev/null 2>&1; then
                 echo "FAIL: $p not found in any repo or AUR"
                 failed=1
               fi
-            done
+            done < <(just install-deps-list)
             exit $failed
           '
 

@@ -108,17 +108,23 @@ deploy-all: stow-all claude-deploy firefox-deploy
 
 # ── Bootstrap ────────────────────────────────────────────────────
 
+# Single source of truth for system packages. Add new ones here.
+_pkgs := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
+         "waybar wofi swaync " + \
+         "pipewire wireplumber pavucontrol libnotify " + \
+         "kitty wezterm neovim zsh starship " + \
+         "brightnessctl playerctl hyprshot " + \
+         "jq curl " + \
+         "adw-gtk-theme ttf-firacode-nerd " + \
+         "stow just git"
+
+# Print the package list, one per line (used by CI to validate names)
+install-deps-list:
+    @echo {{_pkgs}} | tr ' ' '\n'
+
 # Install all system packages this repo configures or references
 install-deps:
-    yay -S --needed \
-        hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland \
-        waybar wofi swaync \
-        pipewire wireplumber pavucontrol libnotify \
-        kitty wezterm neovim zsh starship \
-        brightnessctl playerctl hyprshot \
-        jq curl \
-        adw-gtk-theme ttf-firacode-nerd \
-        stow just git
+    yay -S --needed {{_pkgs}}
 
 # First-time setup: install deps + stow + special-case deploys
 bootstrap: install-deps deploy-all
