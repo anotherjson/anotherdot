@@ -1,5 +1,5 @@
 ---
-name: research
+name: deep-research
 description: Research a topic online and summarize findings
 allowed-tools: ["WebSearch", "WebFetch", "Read", "Write"]
 user-invocable: true
