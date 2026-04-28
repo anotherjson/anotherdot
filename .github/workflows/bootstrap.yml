@@ -14,12 +14,16 @@ jobs:
       # to run as root — we drop to `ab` via runuser for the test body below.
       image: ghcr.io/greyltc-org/archlinux-aur:yay
       options: --user 0
-    env:
-      AB_HOME: /home/ab
     steps:
       - uses: actions/checkout@v4
         with:
           path: dotfiles
+
+      - name: Discover ab's home
+        run: |
+          ab_home=$(getent passwd ab | cut -d: -f6)
+          echo "AB_HOME=$ab_home" >> "$GITHUB_ENV"
+          echo "ab home: $ab_home"
 
       - name: Move repo to ~ab/.dotfiles and chown
         run: |
