@@ -3,7 +3,6 @@ name: worktree
 description: Manage git worktrees — create, list with context, and clean up stale ones
 allowed-tools: ["Bash", "Read"]
 user-invocable: true
-disable-model-invocation: true
 model: haiku
 ---
 
@@ -14,6 +13,7 @@ Parse $ARGUMENTS to determine the subcommand:
 ## Subcommands
 
 ### `new <branch-name> [base-ref]` (default if just a name is given)
+
 1. Determine the repo root with `git rev-parse --show-toplevel`
 2. Derive the repo basename (e.g. `my-project`)
 3. Create worktree at `../<repo-basename>.<branch-name>/` from `base-ref` (default: `main`)
@@ -21,6 +21,7 @@ Parse $ARGUMENTS to determine the subcommand:
 5. Print the path and suggest `cd` command
 
 ### `list`
+
 1. Run `git worktree list --porcelain` and parse output
 2. For each worktree, show:
    - Path
@@ -30,6 +31,7 @@ Parse $ARGUMENTS to determine the subcommand:
 3. Format as a clean table
 
 ### `clean`
+
 1. Run `git worktree list --porcelain` to find all worktrees
 2. Identify stale worktrees (missing directories or branches deleted from remote)
 3. Run `git worktree prune` to remove stale entries

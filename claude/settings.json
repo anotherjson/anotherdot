@@ -51,6 +51,7 @@
     "type": "command",
     "command": "bash /home/anotherjson/.claude/statusline-command.sh"
   },
-  "effortLevel": "high",
+  "theme": "dark-ansi",
+  "editorMode": "vim",
   "mcpServers": {}
 }

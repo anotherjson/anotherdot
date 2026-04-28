@@ -1,0 +1,71 @@
+/* Solarized Osaka theme for libadwaita / GTK4
+ * Based on adw-colors/adw-solarized by lassekongo83
+ * Adapted to Solarized Osaka's darker base palette
+ * Matches waybar, swaync, wofi, hyprlock configs
+ */
+
+/* -- Surface colors ---------------------------------------- */
+@define-color window_bg_color rgba(0, 20, 25, 0.85);
+@define-color window_fg_color #FDF6E3;
+@define-color view_bg_color rgba(0, 43, 54, 0.9);
+@define-color view_fg_color #FDF6E3;
+@define-color headerbar_bg_color rgba(0, 20, 25, 0.85);
+@define-color headerbar_fg_color #FDF6E3;
+@define-color headerbar_backdrop_color @window_bg_color;
+@define-color sidebar_bg_color rgba(0, 20, 25, 0.85);
+@define-color sidebar_fg_color #FDF6E3;
+@define-color sidebar_backdrop_color @window_bg_color;
+@define-color sidebar_shade_color rgba(0, 0, 0, 0.25);
+@define-color sidebar_border_color rgba(173, 184, 184, 0.3);
+@define-color secondary_sidebar_bg_color #002B36;
+@define-color secondary_sidebar_fg_color #FDF6E3;
+@define-color secondary_sidebar_backdrop_color @window_bg_color;
+@define-color secondary_sidebar_shade_color rgba(0, 0, 0, 0.25);
+@define-color secondary_sidebar_border_color rgba(173, 184, 184, 0.3);
+@define-color card_bg_color #073642;
+@define-color card_fg_color #FDF6E3;
+@define-color dialog_bg_color #073642;
+@define-color dialog_fg_color #FDF6E3;
+@define-color popover_bg_color #073642;
+@define-color popover_fg_color #FDF6E3;
+
+/* -- Accent and semantic colors ---------------------------- */
+@define-color accent_bg_color #2AA198;
+@define-color accent_fg_color white;
+@define-color destructive_bg_color #DC322F;
+@define-color success_bg_color #859900;
+@define-color warning_bg_color #B58900;
+@define-color error_bg_color #DC322F;
+
+/* -- CSS custom properties (libadwaita 1.9+) --------------- */
+:root {
+  --accent-bg-color: @accent_bg_color;
+  --accent-fg-color: @accent_fg_color;
+  --window-bg-color: @window_bg_color;
+  --window-fg-color: @window_fg_color;
+  --view-bg-color: @view_bg_color;
+  --view-fg-color: @view_fg_color;
+  --headerbar-bg-color: @headerbar_bg_color;
+  --headerbar-fg-color: @headerbar_fg_color;
+  --headerbar-backdrop-color: @headerbar_backdrop_color;
+  --sidebar-bg-color: @sidebar_bg_color;
+  --sidebar-fg-color: @sidebar_fg_color;
+  --sidebar-backdrop-color: @sidebar_backdrop_color;
+  --sidebar-shade-color: @sidebar_shade_color;
+  --sidebar-border-color: @sidebar_border_color;
+  --secondary-sidebar-bg-color: @secondary_sidebar_bg_color;
+  --secondary-sidebar-fg-color: @secondary_sidebar_fg_color;
+  --secondary-sidebar-backdrop-color: @secondary_sidebar_backdrop_color;
+  --secondary-sidebar-shade-color: @secondary_sidebar_shade_color;
+  --secondary-sidebar-border-color: @secondary_sidebar_border_color;
+  --card-bg-color: @card_bg_color;
+  --card-fg-color: @card_fg_color;
+  --dialog-bg-color: @dialog_bg_color;
+  --dialog-fg-color: @dialog_fg_color;
+  --popover-bg-color: @popover_bg_color;
+  --popover-fg-color: @popover_fg_color;
+  --destructive-bg-color: @destructive_bg_color;
+  --success-bg-color: @success_bg_color;
+  --warning-bg-color: @warning_bg_color;
+  --error-bg-color: @error_bg_color;
+}

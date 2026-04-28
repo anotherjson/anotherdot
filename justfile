@@ -69,6 +69,16 @@ claude-status:
     fi
     [ "$changed" -eq 0 ] && echo "in sync" || true
 
+# ── Firefox config (symlink-based, not stow) ─────────────────────
+
+# Link firefox/chrome/ into the active Firefox profile
+firefox-deploy:
+    #!/usr/bin/env bash
+    profile=$(find ~/.mozilla/firefox -maxdepth 1 -name "*.default-release" -type d | head -1)
+    if [ -z "$profile" ]; then echo "no firefox profile found"; exit 1; fi
+    ln -sfn "{{dotfiles}}/firefox/chrome" "$profile/chrome"
+    echo "firefox chrome/ linked to $profile/chrome"
+
 # ── Stow wrappers ─────────────────────────────────────────────────
 
 # Stow a single package
@@ -93,5 +103,34 @@ stow-all:
     done
     echo "all packages stowed"
 
-# Full deploy: stow all packages + deploy claude config
-deploy-all: stow-all claude-deploy
+# Full deploy: stow all packages + deploy claude + firefox config
+deploy-all: stow-all claude-deploy firefox-deploy
+
+# ── Bootstrap ────────────────────────────────────────────────────
+
+# Single source of truth for system packages. Add new ones here.
+_pkgs := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
+         "waybar wofi swaync " + \
+         "pipewire wireplumber pavucontrol libnotify " + \
+         "kitty wezterm neovim zsh starship " + \
+         "brightnessctl playerctl hyprshot " + \
+         "jq curl " + \
+         "adw-gtk-theme ttf-firacode-nerd " + \
+         "stow just git"
+
+# Print the package list, one per line (used by CI to validate names)
+install-deps-list:
+    @echo {{_pkgs}} | tr ' ' '\n'
+
+# Install all system packages this repo configures or references
+install-deps:
+    yay -S --needed {{_pkgs}}
+
+# First-time setup: install deps + stow + special-case deploys
+bootstrap: install-deps deploy-all
+    @echo ''
+    @echo 'Bootstrap complete. Manual steps remaining:'
+    @echo '  1. chsh -s $(which zsh)     # set zsh as default login shell'
+    @echo '  2. Reload Hyprland (Super+Shift+C) to apply config'
+    @echo '  3. Log out and back in once for GTK theme to fully apply'
+    @echo '  4. Open a new shell so .zshrc loads (dots alias becomes available)'

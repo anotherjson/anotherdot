@@ -1,0 +1,73 @@
+/* Solarized Osaka theme for wofi */
+
+window {
+  font-family: "FiraCode Nerd Font", monospace;
+  font-size: 15px;
+  background-color: rgba(0, 20, 26, 0.9);
+  color: #FDF6E3;
+  border: 2px solid rgba(173, 184, 184, 0.3);
+  border-radius: 10px;
+}
+
+#outer-box {
+  margin: 0;
+  padding: 10px;
+}
+
+#inner-box {
+  margin: 0;
+  padding: 0;
+}
+
+#input {
+  background-color: #073642;
+  color: #FDF6E3;
+  border: 2px solid rgba(173, 184, 184, 0.3);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+#input:focus {
+  border-color: #2AA198;
+}
+
+#scroll {
+  margin: 0;
+  padding: 0;
+}
+
+#text {
+  color: #FDF6E3;
+  background: transparent;
+}
+
+#text:selected {
+  color: #FDF6E3;
+  background: transparent;
+}
+
+#img {
+  background: transparent;
+}
+
+#entry {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background: transparent;
+}
+
+#entry:selected {
+  background-color: #073642;
+  border-left: 3px solid #2AA198;
+}
+
+#entry:selected #text {
+  background: transparent;
+}
+
+#entry:hover {
+  background-color: rgba(7, 54, 66, 0.6);
+}

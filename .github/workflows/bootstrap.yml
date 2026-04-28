@@ -1,0 +1,67 @@
+name: bootstrap
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    container:
+      # Run as root so actions/checkout can write to runner-managed mounts.
+      # The image ships a non-root `ab` user (uid 1000) for yay, which refuses
+      # to run as root — we drop to `ab` via runuser for the test body below.
+      image: ghcr.io/greyltc-org/archlinux-aur:yay
+      options: --user 0
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: dotfiles
+
+      - name: Discover ab's home
+        run: |
+          ab_home=$(getent passwd ab | cut -d: -f6)
+          echo "AB_HOME=$ab_home" >> "$GITHUB_ENV"
+          echo "ab home: $ab_home"
+
+      - name: Move repo to ~ab/.dotfiles and chown
+        run: |
+          mkdir -p "$AB_HOME"
+          mv "$GITHUB_WORKSPACE/dotfiles" "$AB_HOME/.dotfiles"
+          chown -R ab:ab "$AB_HOME"
+
+      - name: Install non-GUI subset
+        run: |
+          pacman -Syu --noconfirm --needed \
+            stow just git jq curl zsh starship neovim
+
+      - name: Verify full package list resolves
+        run: |
+          runuser -u ab -- bash -lc '
+            cd "$HOME/.dotfiles"
+            failed=0
+            while read -r p; do
+              [ -z "$p" ] && continue
+              if ! yay -Si "$p" >/dev/null 2>&1; then
+                echo "FAIL: $p not found in any repo or AUR"
+                failed=1
+              fi
+            done < <(just install-deps-list)
+            exit $failed
+          '
+
+      - name: Fake firefox profile
+        run: runuser -u ab -- mkdir -p "$AB_HOME/.mozilla/firefox/test.default-release"
+
+      - name: First deploy-all
+        run: runuser -u ab -- bash -lc 'cd "$HOME/.dotfiles" && just deploy-all'
+
+      - name: Assert deploy outcomes
+        run: runuser -u ab -- bash "$AB_HOME/.dotfiles/.github/workflows/assert-bootstrap.sh"
+
+      - name: Second deploy-all (idempotency)
+        run: runuser -u ab -- bash -lc 'cd "$HOME/.dotfiles" && just deploy-all'
+
+      - name: Re-assert after second run
+        run: runuser -u ab -- bash "$AB_HOME/.dotfiles/.github/workflows/assert-bootstrap.sh"

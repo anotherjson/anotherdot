@@ -1,0 +1,251 @@
+/* Solarized Osaka — theme internal Firefox pages */
+
+@-moz-document url-prefix(about:newtab), url-prefix(about:blank), url-prefix(about:home) {
+  body {
+    background-color: #00141A !important;
+    color: #FDF6E3 !important;
+  }
+}
+
+/* Solarized Osaka — Gmail
+ * Uses role/aria selectors where possible for stability.
+ * Gmail obfuscated class names may break on rebuild.
+ */
+
+@-moz-document domain("mail.google.com") {
+
+  /* ── Global background and text ─────────────────────── */
+  body,
+  .nH,
+  .bkK,
+  .bhZ {
+    background-color: #00141A !important;
+    color: #FDF6E3 !important;
+  }
+
+  /* ── Sidebar / navigation ───────────────────────────── */
+  [role="navigation"],
+  [role="navigation"] * {
+    background-color: #002B36 !important;
+    color: #FDF6E3 !important;
+  }
+
+  [role="navigation"] a,
+  [role="navigation"] a:visited {
+    color: #FDF6E3 !important;
+  }
+
+  [role="navigation"] a:hover {
+    color: #2AA198 !important;
+  }
+
+  /* Active/selected nav item */
+  .TN.bze,
+  .TN.aHS-bnq {
+    background-color: #073642 !important;
+  }
+
+  /* ── Header / top bar / search ────────────────────────── */
+  header,
+  [role="banner"],
+  #gb,
+  .gb_Fd,
+  .gb_3d,
+  .gb_Ld {
+    background: transparent !important;
+    color: #FDF6E3 !important;
+  }
+
+  /* Search bar container + input */
+  .gb_gf,
+  .gb_Mf,
+  .gb_If,
+  .gb_Jf,
+  form[role="search"],
+  form[role="search"] *,
+  .dw,
+  .L3,
+  input[type="text"],
+  input[name="q"],
+  [aria-label="Search mail"],
+  [aria-label="Search mail"] *,
+  .gsfi,
+  .gstl_50 {
+    background-color: #002B36 !important;
+    color: #FDF6E3 !important;
+    border-color: rgba(173, 184, 184, 0.3) !important;
+  }
+
+  /* ── Toolbar row (checkbox, refresh, dots) ──────────── */
+  .aeH,
+  .aqK,
+  .G-atb,
+  .aim,
+  .ajl,
+  .aic {
+    background: transparent !important;
+    color: #FDF6E3 !important;
+  }
+
+  /* ── Mail list ──────────────────────────────────────── */
+  .AO,
+  .aeF {
+    background-color: #00141A !important;
+    color: #FDF6E3 !important;
+  }
+
+  /* Mail rows */
+  table[role="presentation"] tr {
+    background-color: #00141A !important;
+    color: #93A1A1 !important;
+  }
+
+  /* Unread messages */
+  .zA.zE {
+    background-color: #002B36 !important;
+    color: #FDF6E3 !important;
+  }
+
+  .zA.zE .bqe,
+  .zA.zE .bog,
+  .zA.zE .a4W,
+  .zA.zE span {
+    color: #FDF6E3 !important;
+  }
+
+  /* Read messages */
+  .zA:not(.zE) {
+    background-color: #00141A !important;
+    color: #657B83 !important;
+  }
+
+  /* Message hover */
+  .zA:hover {
+    background-color: #073642 !important;
+  }
+
+  /* Selected message */
+  .x7 {
+    background-color: #073642 !important;
+  }
+
+  /* ── Email body ─────────────────────────────────────── */
+  .ii.gt *:not(a),
+  .gmail_default,
+  .a3s *:not(a) {
+    color: #93A1A1 !important;
+  }
+
+  /* Message header/info area */
+  .hP,
+  .gE,
+  .gD,
+  .g6 {
+    color: #FDF6E3 !important;
+  }
+
+  .ha .hP {
+    color: #FDF6E3 !important;
+  }
+
+  /* ── Compose window ─────────────────────────────────── */
+  .et,
+  .wO,
+  .nr,
+  .aoT,
+  .Ap,
+  .Ar,
+  .At,
+  .Am,
+  .aX,
+  .aDh,
+  .Uz,
+  .GQ,
+  .nH .if {
+    background-color: #073642 !important;
+    color: #FDF6E3 !important;
+  }
+
+  /* Compose body */
+  .Am .editable,
+  .LW-avf {
+    background-color: #073642 !important;
+    color: #FDF6E3 !important;
+  }
+
+  /* ── Buttons ────────────────────────────────────────── */
+  [role="button"] {
+    color: #FDF6E3 !important;
+    background-color: transparent !important;
+  }
+
+  /* Compose button (FAB) */
+  .T-I.T-I-KE {
+    background-color: #2AA198 !important;
+    color: #FDF6E3 !important;
+  }
+
+  /* ── Toolbars ───────────────────────────────────────── */
+  [role="toolbar"] {
+    background-color: #00141A !important;
+    color: #FDF6E3 !important;
+  }
+
+  /* ── Popups, menus, dialogs ─────────────────────────── */
+  [role="menu"],
+  [role="menuitem"],
+  [role="dialog"],
+  [role="alertdialog"],
+  .J-M,
+  .J-M .J-Z {
+    background-color: #073642 !important;
+    color: #FDF6E3 !important;
+  }
+
+  [role="menuitem"]:hover {
+    background-color: #002B36 !important;
+  }
+
+  /* ── Links ──────────────────────────────────────────── */
+  a {
+    color: #2AA198 !important;
+  }
+
+  a:visited {
+    color: #6C71C4 !important;
+  }
+
+  a:hover {
+    color: #CB4B16 !important;
+  }
+
+  /* ── Borders ────────────────────────────────────────── */
+  .Wg,
+  .aeN,
+  .aRs {
+    border-color: rgba(173, 184, 184, 0.3) !important;
+  }
+
+  /* ── Scrollbar ──────────────────────────────────────── */
+  * {
+    scrollbar-color: #073642 #00141A;
+  }
+
+  /* ── Footer ──────────────────────────────────────────── */
+  .md.mj,
+  .mn,
+  .aeG,
+  .l2.L3,
+  footer,
+  [role="contentinfo"],
+  .aiD,
+  .bsU {
+    background-color: transparent !important;
+    color: #657B83 !important;
+  }
+
+  /* ── Hide ads ───────────────────────────────────────── */
+  table[role="presentation"] div[role="complementary"] {
+    display: none !important;
+  }
+}

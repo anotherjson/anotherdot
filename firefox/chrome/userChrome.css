@@ -1,0 +1,67 @@
+/* Solarized Osaka theme for Firefox */
+
+:root {
+  /* Main surfaces */
+  --lwt-frame: #00141A !important;
+  --lwt-accent-color: #00141A !important;
+  --lwt-text-color: #FDF6E3 !important;
+
+  /* Toolbar */
+  --toolbar-bgcolor: #073642 !important;
+  --toolbar-color: #FDF6E3 !important;
+  --toolbarseparator-color: #2AA198 !important;
+  --toolbarbutton-hover-background: #002B36 !important;
+  --toolbarbutton-active-background: #002B36 !important;
+
+  /* URL bar */
+  --toolbar-field-background-color: #002B36 !important;
+  --toolbar-field-color: #FDF6E3 !important;
+  --toolbar-field-focus-background-color: #073642 !important;
+  --toolbar-field-focus-color: #FDF6E3 !important;
+  --toolbar-field-focus-border-color: #2AA198 !important;
+
+  /* URL bar results */
+  --urlbar-popup-url-color: #2AA198 !important;
+  --urlbar-box-bgcolor: #073642 !important;
+  --urlbar-box-text-color: #657B83 !important;
+  --urlbar-box-hover-bgcolor: #002B36 !important;
+  --urlbar-box-hover-text-color: #FDF6E3 !important;
+  --urlbar-box-focus-bgcolor: #073642 !important;
+
+  /* Tabs */
+  --lwt-selected-tab-background-color: #073642 !important;
+  --lwt-tab-text: #FDF6E3 !important;
+  --tab-selected-bgcolor: #073642 !important;
+  --tab-selected-textcolor: #FDF6E3 !important;
+
+  /* Sidebar */
+  --lwt-sidebar-background-color: #00141A !important;
+  --sidebar-background-color: #00141A !important;
+
+  /* Highlights */
+  --lwt-toolbar-field-highlight: #2AA198 !important;
+  --lwt-toolbar-field-highlight-text: #FDF6E3 !important;
+}
+
+/* Force active tab background */
+.tabbrowser-tab[selected] .tab-background {
+  background-color: #073642 !important;
+  background-image: none !important;
+}
+
+/* Tab bar strip background */
+#TabsToolbar {
+  background-color: #00141A !important;
+}
+
+/* Inactive tabs */
+.tabbrowser-tab:not([selected]) .tab-background {
+  background-color: transparent !important;
+}
+
+/* New tab button */
+#tabs-newtab-button,
+#new-tab-button {
+  color: #FDF6E3 !important;
+}
+
