@@ -3,13 +3,13 @@ name: pr
 description: Create a GitHub PR with auto-generated summary from branch commits
 allowed-tools: ["Bash", "Read", "Grep"]
 user-invocable: true
-disable-model-invocation: true
 model: haiku
 ---
 
 Create a GitHub pull request for the current branch.
 
 Steps:
+
 1. Determine the base branch (usually main)
 2. Run `git log main..HEAD --oneline` to see all commits
 3. Run `git diff main...HEAD --stat` for changed files summary
