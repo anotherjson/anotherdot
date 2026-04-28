@@ -45,37 +45,24 @@ for glyph parity in waybar/wofi/kitty.
 
 ## Bootstrap
 
-Install everything this repo configures or references (Arch):
-
-```zsh
-yay -S hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland \
-       waybar wofi swaync pavucontrol pipewire wireplumber \
-       kitty wezterm neovim zsh starship \
-       adw-gtk-theme ttf-firacode-nerd \
-       stow just git
-```
-
-Clone the repo:
+Requires `git`, `just`, and an AUR helper (`yay`) already installed. Clone the
+repo, then bootstrap from inside it:
 
 ```zsh
 git clone https://github.com/anotherjson/anotherdot.git ~/.dotfiles
+cd ~/.dotfiles
+just bootstrap
 ```
 
-Add the `dots` alias so you can run recipes from anywhere (already in
-`zsh/.zshrc` once that package is stowed):
+`just bootstrap` runs two recipes: `install-deps` (`yay -S --needed` for the
+full system-package list — Hyprland stack, audio, terminals, editor, theme,
+fonts, scripted CLI tools) and `deploy-all` (stows every package, then runs
+the Claude copy-deploy and Firefox symlink-deploy). At the end it prints any
+manual steps remaining — notably setting zsh as the default shell and
+reloading Hyprland.
 
-```zsh
-alias dots="just --justfile ~/.dotfiles/justfile --working-directory ~/.dotfiles"
-```
-
-Deploy everything:
-
-```zsh
-dots deploy-all
-```
-
-This runs `stow-all` (links every stow package into `$HOME`), then
-`claude-deploy` and `firefox-deploy` for the special-case configs.
+The package list is the source of truth; see the `install-deps` recipe in
+[`justfile`](justfile) to inspect or add packages.
 
 ## Day-to-day commands
 

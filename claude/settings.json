@@ -52,5 +52,8 @@
     "command": "bash /home/anotherjson/.claude/statusline-command.sh"
   },
   "effortLevel": "high",
-  "mcpServers": {}
+  "theme": "dark-ansi",
+  "editorMode": "vim",
+  "mcpServers": {},
+  "skipAutoPermissionPrompt": true
 }
