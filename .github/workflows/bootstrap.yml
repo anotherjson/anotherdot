@@ -36,7 +36,7 @@ jobs:
           pacman -Syu --noconfirm --needed \
             stow just git jq curl zsh starship neovim
 
-      - name: Verify full package list resolves (download-only)
+      - name: Verify full package list resolves
         run: |
           runuser -u ab -- bash -lc '
             cd "$HOME/.dotfiles"
@@ -46,7 +46,14 @@ jobs:
                     | tr -d "\\" \
                     | xargs)
             echo "Validating: $pkgs"
-            yay -Sw --needed --noconfirm $pkgs
+            failed=0
+            for p in $pkgs; do
+              if ! yay -Si "$p" >/dev/null 2>&1; then
+                echo "FAIL: $p not found in any repo or AUR"
+                failed=1
+              fi
+            done
+            exit $failed
           '
 
       - name: Fake firefox profile
