@@ -296,3 +296,11 @@ gemini/.gemini/tmp/
 gemini/.gemini/trustedFolders.json
 gemini/.gemini/projects.json
 gemini/.gemini/history/
+
+# opencode CLI ignore rules
+opencode/.config/opencode/auth.json
+opencode/.config/opencode/node_modules/
+opencode/.config/opencode/package.json
+opencode/.config/opencode/package-lock.json
+opencode/.config/opencode/bun.lock
+opencode/.local/
