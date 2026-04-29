@@ -27,6 +27,7 @@ Each top-level directory is a stow package mirroring its target path inside
 | `firefox` | userChrome / userContent (symlink-based — see below) |
 | [`claude`](claude/README.md) | Claude Code config (copy-based) |
 | `gemini` | Gemini CLI config |
+| [`opencode`](opencode/README.md) | opencode TUI agent (bundled free model, no account) |
 | `backgrounds` | Wallpapers |
 
 Platform-specific setup quicknotes live in [`guides/`](guides/):

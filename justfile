@@ -116,7 +116,8 @@ _pkgs := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
          "brightnessctl playerctl hyprshot " + \
          "jq curl " + \
          "adw-gtk-theme ttf-firacode-nerd " + \
-         "stow just git"
+         "stow just git " + \
+         "opencode"
 
 # Print the package list, one per line (used by CI to validate names)
 install-deps-list:
