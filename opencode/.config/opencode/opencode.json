@@ -1,7 +1,7 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "share": "disabled",
-  "autoupdate": "notify",
+  "autoupdate": false,
   "snapshot": false,
   "model": "opencode/big-pickle",
   "small_model": "opencode/big-pickle"

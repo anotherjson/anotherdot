@@ -34,7 +34,7 @@ Set in `opencode.json`:
 | Key | Value | Why |
 |-----|-------|-----|
 | `share` | `"disabled"` | No accidental `/share` uploads |
-| `autoupdate` | `"notify"` | Tell me, don't surprise-update |
+| `autoupdate` | `false` | Disabled — opencode is pacman-managed (`extra/opencode`); in-binary updates would conflict |
 | `snapshot` | `false` | Skip per-session snapshots (saves disk on large repos) |
 
 ## Theme
