@@ -112,11 +112,13 @@ deploy-all: stow-all claude-deploy firefox-deploy
 _pkgs := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
          "waybar wofi swaync " + \
          "pipewire wireplumber pavucontrol libnotify " + \
-         "kitty wezterm neovim zsh starship " + \
+         "kitty wezterm-git neovim zsh starship " + \
          "brightnessctl playerctl hyprshot " + \
          "jq curl " + \
          "adw-gtk-theme ttf-firacode-nerd " + \
          "stow just git " + \
+         "udiskie exfatprogs " + \
+         "darktable " + \
          "opencode"
 
 # Print the package list, one per line (used by CI to validate names)
@@ -135,3 +137,4 @@ bootstrap: install-deps deploy-all
     @echo '  2. Reload Hyprland (Super+Shift+C) to apply config'
     @echo '  3. Log out and back in once for GTK theme to fully apply'
     @echo '  4. Open a new shell so .zshrc loads (dots alias becomes available)'
+    @echo '  5. sudo systemctl enable --now udisks2     # enable removable-media automount for udiskie'

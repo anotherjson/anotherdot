@@ -21,7 +21,7 @@
         // "mpd",
         // "idle_inhibitor",
         // "custom/weather",
-        "tray",
+        "custom/udiskie",
         "custom/swaync",
         "pulseaudio",
         // "power-profiles-daemon",
@@ -109,13 +109,14 @@
         "on-click": "swaync-client -t -sw",
         "on-click-right": "swaync-client -d -sw"
     },
-    "tray": {
-        // "icon-size": 21,
-        "spacing": 10,
-        // "icons": {
-        //   "blueman": "bluetooth",
-        //   "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
-        // }
+    "custom/udiskie": {
+        "tooltip": true,
+        "format": "<span size='13000'>󰋊</span>{}",
+        "return-type": "json",
+        "exec": "~/.config/waybar/scripts/udiskie-status.sh",
+        "interval": 3,
+        "on-click": "~/.config/waybar/scripts/udiskie-eject.sh",
+        "on-click-right": "nautilus /run/media/anotherjson 2>/dev/null"
     },
     "clock": {
         // "timezone": "America/New_York",
