@@ -3,6 +3,7 @@
 ## Shell & Tooling
 - IMPORTANT: Use `eza -la` for directory listings, never bare `ls`
 - IMPORTANT: Use `uv run` for all Python execution, never global python or pip
+- IMPORTANT: Use `yay` for **all** package operations — install, remove, query, search, file-owns. Never bare `pacman`, not even for read-only queries like `-Q` / `-Si` / `-F`. yay accepts the same flags and wraps pacman. Use `sudo pacman` only if explicitly asked.
 - Use `git switch -c <branch>` to create branches, `git switch <branch>` to change
 - This is Arch Linux with zsh
 

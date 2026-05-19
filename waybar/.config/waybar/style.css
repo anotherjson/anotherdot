@@ -60,6 +60,7 @@ button {
 }
 
 #custom-swaync,
+#custom-udiskie,
 #pulseaudio,
 #clock,
 #battery,
@@ -148,6 +149,16 @@ button {
 #custom-swaync {
     color: @violet;
     border-bottom: 2px solid @violet;
+}
+
+#custom-udiskie {
+    color: #2AA198;                       /* Solarized cyan500 — idle */
+    border-bottom: 2px solid #2AA198;
+}
+
+#custom-udiskie.mounted {
+    color: #859900;                       /* Solarized green500 — mounted */
+    border-bottom: 2px solid #859900;
 }
 
 #custom-vpn {

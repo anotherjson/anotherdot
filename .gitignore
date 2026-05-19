@@ -272,6 +272,7 @@ tags
 [Ll]ocal
 [Ss]cripts
 !hypr/.config/hypr/scripts/
+!waybar/.config/waybar/scripts/
 pyvenv.cfg
 pip-selfcheck.json
 
