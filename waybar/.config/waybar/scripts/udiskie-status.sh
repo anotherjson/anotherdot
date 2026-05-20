@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Emit waybar JSON describing currently-mounted removable media under /run/media/$USER.
 # Uses jq to encode newlines safely so multi-label tooltips don't break JSON parsing.
+set -euo pipefail
 shopt -s nullglob
 mounts=(/run/media/"$USER"/*/)
 count=${#mounts[@]}
