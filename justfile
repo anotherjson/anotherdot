@@ -117,7 +117,7 @@ _pkgs := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
          "jq curl " + \
          "adw-gtk-theme ttf-firacode-nerd " + \
          "stow just git " + \
-         "udiskie exfatprogs " + \
+         "udiskie exfatprogs nautilus " + \
          "darktable " + \
          "opencode"
 

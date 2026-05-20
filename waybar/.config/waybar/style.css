@@ -152,13 +152,13 @@ button {
 }
 
 #custom-udiskie {
-    color: #2AA198;                       /* Solarized cyan500 — idle */
-    border-bottom: 2px solid #2AA198;
+    color: @teal;
+    border-bottom: 2px solid @teal;
 }
 
 #custom-udiskie.mounted {
-    color: #859900;                       /* Solarized green500 — mounted */
-    border-bottom: 2px solid #859900;
+    color: @green;
+    border-bottom: 2px solid @green;
 }
 
 #custom-vpn {
