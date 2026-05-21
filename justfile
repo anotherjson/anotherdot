@@ -95,6 +95,9 @@ restow package:
 
 # ── Bootstrap ────────────────────────────────────────────────────
 
+# git/stow/just/yay must be installed manually before `just bootstrap` can
+# start (see _preflight). They're listed here so subsequent runs keep them
+# updated via yay -S --needed.
 # Package bundles per type. Add new packages here.
 _pkgs_base := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
               "waybar wofi swaync " + \
@@ -173,11 +176,18 @@ _preflight type:
     echo "preflight: ok for type={{type}}"
 
 # Install system packages for the given type
-install-deps type="base":
+install-deps type="base": (_preflight type)
     #!/usr/bin/env bash
     set -euo pipefail
-    pkgs=$(just _pkgs-for {{type}})
-    yay -S --needed $pkgs
+    case "{{type}}" in
+        base)       pkgs="{{_pkgs_base}}";;
+        production) pkgs="{{_pkgs_base}} {{_pkgs_production_extras}}";;
+        gaming)     pkgs="{{_pkgs_base}} {{_pkgs_gaming_extras}}";;
+        all)        pkgs="{{_pkgs_base}} {{_pkgs_production_extras}} {{_pkgs_gaming_extras}}";;
+        *) echo "unknown type: {{type}}. Valid: base, production, gaming, all" >&2; exit 1;;
+    esac
+    read -ra pkg_arr <<<"$pkgs"
+    yay -S --needed "${pkg_arr[@]}"
 
 # Detect host class (laptop|desktop) and symlink the matching host config variant
 host-init:
@@ -196,11 +206,17 @@ host-init:
     echo "host-init: linked ~/.config/waybar/host.jsonc → host.jsonc.$profile"
 
 # Stow the stow packages relevant to the type
-stow-all type="base":
+stow-bundle type="base":
     #!/usr/bin/env bash
     set -euo pipefail
-    pkgs=$(just _stow-for {{type}})
-    for p in $pkgs; do
+    base="hypr waybar wofi kitty wezterm nvim zsh starship gtk udiskie backgrounds"
+    case "{{type}}" in
+        base|gaming)    pkgs="$base";;
+        production|all) pkgs="$base gemini opencode";;
+        *) echo "unknown type: {{type}}. Valid: base, production, gaming, all" >&2; exit 1;;
+    esac
+    read -ra pkg_arr <<<"$pkgs"
+    for p in "${pkg_arr[@]}"; do
         stow -d "{{dotfiles}}" -t "{{home}}" "$p"
     done
     echo "stowed: $pkgs"
@@ -209,6 +225,10 @@ stow-all type="base":
 install-claude:
     #!/usr/bin/env bash
     set -euo pipefail
+    if [ "${CI:-}" = "true" ]; then
+        echo "install-claude: CI detected, skipping"
+        exit 0
+    fi
     if [ -x "{{home}}/.local/bin/claude" ]; then
         echo "install-claude: already installed at {{home}}/.local/bin/claude, skipping"
         exit 0
@@ -231,15 +251,21 @@ firefox-profile-init:
     echo "firefox-profile-init: launching firefox --headless briefly to create profile"
     firefox --headless &
     pid=$!
-    sleep 5
+    for _ in $(seq 1 30); do
+        compgen -G "$HOME/.mozilla/firefox/*.default-release" >/dev/null 2>&1 && break
+        sleep 1
+    done
     kill "$pid" 2>/dev/null || true
     wait "$pid" 2>/dev/null || true
+    compgen -G "$HOME/.mozilla/firefox/*.default-release" >/dev/null 2>&1 \
+        || { echo "ERROR: firefox-profile-init: profile not created after 30s" >&2; exit 1; }
 
 # Full deploy for the given type
-deploy-all type="base": host-init
+deploy type="base": (_preflight type)
     #!/usr/bin/env bash
     set -euo pipefail
-    just stow-all {{type}}
+    just stow-bundle {{type}}
+    just host-init
     case "{{type}}" in
         production|all)
             just install-claude
@@ -250,7 +276,7 @@ deploy-all type="base": host-init
     esac
 
 # First-time setup: preflight + install deps + deploy
-bootstrap type="base": (_preflight type) (install-deps type) (deploy-all type)
+bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo ''
     @echo 'Bootstrap complete. Manual steps remaining:'
     @echo '  1. chsh -s $(which zsh)     # set zsh as default login shell'
