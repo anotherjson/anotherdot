@@ -48,6 +48,10 @@ Output goes to `~/.config/hypr/host.conf` and `~/.config/waybar/host.jsonc`.
 The main Hyprland config sources the first; the main waybar config
 includes the second.
 
+`just stow hypr`, `just stow waybar` (and their `restow` counterparts)
+also chain `host-init` automatically, so single-package stows don't leave
+the include target dangling. Other packages aren't affected.
+
 The laptop branch is exercised only by manual runs on a laptop; CI covers
 the desktop branch and the symlink mechanics.
 
