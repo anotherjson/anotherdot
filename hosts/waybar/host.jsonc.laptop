@@ -1,0 +1,36 @@
+// Laptop waybar overrides. Symlinked into place by `just host-init`
+// when /sys/class/power_supply/BAT* exists. Merged into the main config via
+// the `"include"` directive in waybar/.config/waybar/config.jsonc.
+{
+    "modules-right": [
+        "custom/udiskie",
+        "custom/swaync",
+        "pulseaudio",
+        "cpu",
+        "memory",
+        "temperature",
+        "backlight",
+        "network",
+        "battery"
+    ],
+    "backlight": {
+        "format": "<span size='13000'>{icon} </span> {percent}% ",
+        "tooltip-format": "{percent}%",
+        "format-icons": ["", "", "", "", "", "", "", "", ""]
+    },
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "<span size='13000'>{icon} </span> {capacity}%",
+        "format-alt": "<span size='13000'>{icon} </span> {time}",
+        "format-full": "<span size='13000'> </span>{capacity}%",
+        "format-warning": "<span size='13000'>{icon} </span> {capacity}%",
+        "format-critical": "<span size='13000'>{icon} </span> {capacity}%",
+        "format-charging": "<span size='13000'> </span>{capacity}%",
+        "format-plugged": "<span size='13000'> </span>{capacity}%",
+        "format-icons": ["", "", "", "", ""],
+        "tooltip-format": "{time}"
+    }
+}

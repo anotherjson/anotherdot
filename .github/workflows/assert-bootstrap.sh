@@ -36,6 +36,12 @@ assert_resolves_to "$HOME/.config/kitty/kitty.conf" \
 assert_resolves_to "$HOME/.config/waybar/config.jsonc" \
     "$dotfiles/waybar/.config/waybar/config.jsonc"
 
+# host-init linked the desktop variants (no BAT* in CI container)
+assert_resolves_to "$HOME/.config/hypr/host.conf" \
+    "$dotfiles/hosts/hypr/host.conf.desktop"
+assert_resolves_to "$HOME/.config/waybar/host.jsonc" \
+    "$dotfiles/hosts/waybar/host.jsonc.desktop"
+
 # wofi package
 assert_resolves_to "$HOME/.config/wofi/style.css" \
     "$dotfiles/wofi/.config/wofi/style.css"

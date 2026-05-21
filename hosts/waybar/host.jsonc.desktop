@@ -1,0 +1,14 @@
+// Desktop waybar overrides. Symlinked into place by `just host-init` when
+// no battery is detected. Merged into the main config via the `"include"`
+// directive in waybar/.config/waybar/config.jsonc.
+{
+    "modules-right": [
+        "custom/udiskie",
+        "custom/swaync",
+        "pulseaudio",
+        "cpu",
+        "memory",
+        "temperature",
+        "network"
+    ]
+}

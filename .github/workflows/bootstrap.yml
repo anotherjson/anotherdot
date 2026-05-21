@@ -47,7 +47,7 @@ jobs:
                 echo "FAIL: $p not found in any repo or AUR"
                 failed=1
               fi
-            done < <(just install-deps-list)
+            done < <(just install-deps-list all)
             exit $failed
           '
 
@@ -55,13 +55,13 @@ jobs:
         run: runuser -u ab -- mkdir -p "$AB_HOME/.mozilla/firefox/test.default-release"
 
       - name: First deploy-all
-        run: runuser -u ab -- bash -lc 'cd "$HOME/.dotfiles" && just deploy-all'
+        run: runuser -u ab -- bash -lc 'cd "$HOME/.dotfiles" && just deploy-all production'
 
       - name: Assert deploy outcomes
         run: runuser -u ab -- bash "$AB_HOME/.dotfiles/.github/workflows/assert-bootstrap.sh"
 
       - name: Second deploy-all (idempotency)
-        run: runuser -u ab -- bash -lc 'cd "$HOME/.dotfiles" && just deploy-all'
+        run: runuser -u ab -- bash -lc 'cd "$HOME/.dotfiles" && just deploy-all production'
 
       - name: Re-assert after second run
         run: runuser -u ab -- bash "$AB_HOME/.dotfiles/.github/workflows/assert-bootstrap.sh"
