@@ -1,0 +1,3 @@
+# Desktop Hyprland overrides. Symlinked into place by `just host-init`
+# when no battery is detected. Intentionally empty — the catch-all
+# `monitor=,preferred,auto,auto` in hyprland.conf covers desktop monitors.

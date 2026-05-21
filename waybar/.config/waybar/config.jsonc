@@ -1,5 +1,9 @@
 // -*- mode: jsonc -*-
 {
+    // Per-host overrides (modules-right + battery/backlight modules on laptop)
+    // live in ~/.config/waybar/host.jsonc, symlinked by `just host-init`.
+    // See guides/host-config.md.
+    "include": ["~/.config/waybar/host.jsonc"],
     // "layer": "top", // Waybar at top layer
     "position": "top", // Waybar position (top|bottom|left|right)
     // "height": 30, // Waybar height (to be removed for auto height)
@@ -17,25 +21,7 @@
         // "hyprland/window",
         "clock"
     ],
-    "modules-right": [
-        // "mpd",
-        // "idle_inhibitor",
-        // "custom/weather",
-        "custom/udiskie",
-        "custom/swaync",
-        "pulseaudio",
-        // "power-profiles-daemon",
-        // "keyboard-state",
-        "cpu",
-        "memory",
-        "temperature",
-        "backlight",
-        "network",
-        "battery"
-        // "battery#bat2",
-        // "clock"
-        // "custom/power"
-    ],
+    // modules-right is defined per-host in host.jsonc (see "include" above).
     // Modules configuration
     // "hyprland/workspaces": {
     //      "disable-scroll": true,
@@ -142,38 +128,7 @@
         "format-icons": ["", "", ""],
         "format-alt": "<span size='13000'>{icon} </span> {temperatureF}°F",
     },
-    "backlight": {
-        // "device": "acpi_video1",
-        // "format": "{percent}% {icon}",
-        "format": "<span size='13000'>{icon} </span> {percent}% ",
-        "tooltip-format": "{percent}%",
-        "format-icons": ["", "", "", "", "", "", "", "", ""]
-    },
-    "battery": {
-        "states": {
-            // "good": 95,
-            "warning": 30,
-            "critical": 15,
-        },
-        // "format": "{capacity}% {icon}",
-        // "format-full": "{capacity}% {icon}",
-        // "format-charging": "{capacity}% ",
-        // "format-plugged": "{capacity}% ",
-        // "format-alt": "{time} {icon}",
-        // // "format-good": "", // An empty format will hide the module
-        // // "format-full": "",
-        // "format-icons": ["", "", "", "", ""]
-        "format": "<span size='13000'>{icon} </span> {capacity}%",
-        "format-alt": "<span size='13000'>{icon} </span> {time}",
-        "format-full": "<span size='13000'> </span>{capacity}%",
-        "format-warning": "<span size='13000'>{icon} </span> {capacity}%",
-        "format-critical": "<span size='13000'>{icon} </span> {capacity}%",
-        "format-charging": "<span size='13000'> </span>{capacity}%",
-        "format-plugged": "<span size='13000'> </span>{capacity}%",
-        "format-full": "<span size='13000'> </span>{capacity}%",
-        "format-icons": ["", "", "", "", ""],
-        "tooltip-format": "{time}"
-    },
+    // backlight + battery modules (laptop-only) live in host.jsonc.laptop.
     // "battery#bat2": {
     //     "bat": "BAT2"
     // },

@@ -93,44 +93,164 @@ unstow package:
 restow package:
     stow -d "{{dotfiles}}" -t "{{home}}" -R {{package}}
 
-# Stow all packages (skips claude, guides, .git)
-stow-all:
-    #!/usr/bin/env bash
-    for pkg in "{{dotfiles}}"/*/; do
-        name=$(basename "$pkg")
-        case "$name" in claude|guides|.git) continue ;; esac
-        stow -d "{{dotfiles}}" -t "{{home}}" "$name"
-    done
-    echo "all packages stowed"
-
-# Full deploy: stow all packages + deploy claude + firefox config
-deploy-all: stow-all claude-deploy firefox-deploy
-
 # ── Bootstrap ────────────────────────────────────────────────────
 
-# Single source of truth for system packages. Add new ones here.
-_pkgs := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
-         "waybar wofi swaync " + \
-         "pipewire wireplumber pavucontrol libnotify " + \
-         "kitty wezterm-git neovim zsh starship " + \
-         "brightnessctl playerctl hyprshot " + \
-         "jq curl " + \
-         "adw-gtk-theme ttf-firacode-nerd " + \
-         "stow just git " + \
-         "udiskie exfatprogs nautilus " + \
-         "darktable " + \
-         "opencode"
+# Package bundles per type. Add new packages here.
+_pkgs_base := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
+              "waybar wofi swaync " + \
+              "pipewire wireplumber pavucontrol libnotify " + \
+              "kitty wezterm-git neovim zsh starship " + \
+              "brightnessctl playerctl hyprshot " + \
+              "jq curl " + \
+              "adw-gtk-theme ttf-firacode-nerd " + \
+              "stow just git " + \
+              "udiskie exfatprogs"
 
-# Print the package list, one per line (used by CI to validate names)
-install-deps-list:
-    @echo {{_pkgs}} | tr ' ' '\n'
+_pkgs_production_extras := "firefox nautilus darktable opencode"
+_pkgs_gaming_extras     := "steam"
 
-# Install all system packages this repo configures or references
-install-deps:
-    yay -S --needed {{_pkgs}}
+# Resolve a type → space-separated package list
+_pkgs-for type:
+    #!/usr/bin/env bash
+    case "{{type}}" in
+        base)       echo "{{_pkgs_base}}";;
+        production) echo "{{_pkgs_base}} {{_pkgs_production_extras}}";;
+        gaming)     echo "{{_pkgs_base}} {{_pkgs_gaming_extras}}";;
+        all)        echo "{{_pkgs_base}} {{_pkgs_production_extras}} {{_pkgs_gaming_extras}}";;
+        *) echo "unknown type: {{type}}. Valid: base, production, gaming, all" >&2; exit 1;;
+    esac
 
-# First-time setup: install deps + stow + special-case deploys
-bootstrap: install-deps deploy-all
+# Resolve a type → space-separated stow package list
+_stow-for type:
+    #!/usr/bin/env bash
+    base="hypr waybar wofi kitty wezterm nvim zsh starship gtk udiskie backgrounds"
+    case "{{type}}" in
+        base|gaming)    echo "$base";;
+        production|all) echo "$base gemini opencode";;
+        *) echo "unknown type: {{type}}. Valid: base, production, gaming, all" >&2; exit 1;;
+    esac
+
+# Print resolved package list (used by CI to validate names)
+install-deps-list type="base":
+    @just _pkgs-for {{type}} | tr ' ' '\n'
+
+# Validate the type, required commands, and gaming prerequisites before any
+# install attempt. Fails fast with actionable error messages.
+_preflight type:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    case "{{type}}" in
+        base|production|gaming|all) ;;
+        *) echo "ERROR: unknown type: {{type}}. Valid: base, production, gaming, all" >&2; exit 1;;
+    esac
+    missing=()
+    for cmd in yay git stow; do
+        command -v "$cmd" >/dev/null 2>&1 || missing+=("$cmd")
+    done
+    case "{{type}}" in
+        production|all)
+            command -v curl >/dev/null 2>&1 || missing+=("curl")
+            ;;
+    esac
+    if [ "${#missing[@]}" -ne 0 ]; then
+        echo "ERROR: required commands missing: ${missing[*]}" >&2
+        echo "On Arch: 'sudo pacman -S --needed git base-devel stow curl', then build yay+just from AUR." >&2
+        exit 1
+    fi
+    if [ ! -f "{{dotfiles}}/justfile" ]; then
+        echo "ERROR: dotfiles repo not found at {{dotfiles}}/justfile" >&2
+        exit 1
+    fi
+    case "{{type}}" in
+        gaming|all)
+            if ! grep -qE '^\[multilib\]' /etc/pacman.conf; then
+                echo "ERROR: type={{type}} needs steam, which requires the multilib repo." >&2
+                echo "Enable it: uncomment [multilib] in /etc/pacman.conf, then run 'sudo pacman -Syu'." >&2
+                exit 1
+            fi
+            ;;
+    esac
+    echo "preflight: ok for type={{type}}"
+
+# Install system packages for the given type
+install-deps type="base":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    pkgs=$(just _pkgs-for {{type}})
+    yay -S --needed $pkgs
+
+# Detect host class (laptop|desktop) and symlink the matching host config variant
+host-init:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p "{{home}}/.config/hypr" "{{home}}/.config/waybar"
+    if compgen -G "/sys/class/power_supply/BAT*" > /dev/null 2>&1; then
+        profile=laptop
+    else
+        profile=desktop
+    fi
+    echo "host-init: detected profile=$profile"
+    ln -sfn "{{dotfiles}}/hosts/hypr/host.conf.$profile"    "{{home}}/.config/hypr/host.conf"
+    ln -sfn "{{dotfiles}}/hosts/waybar/host.jsonc.$profile" "{{home}}/.config/waybar/host.jsonc"
+    echo "host-init: linked ~/.config/hypr/host.conf → host.conf.$profile"
+    echo "host-init: linked ~/.config/waybar/host.jsonc → host.jsonc.$profile"
+
+# Stow the stow packages relevant to the type
+stow-all type="base":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    pkgs=$(just _stow-for {{type}})
+    for p in $pkgs; do
+        stow -d "{{dotfiles}}" -t "{{home}}" "$p"
+    done
+    echo "stowed: $pkgs"
+
+# Install Claude Code CLI via the official installer if not already present
+install-claude:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -x "{{home}}/.local/bin/claude" ]; then
+        echo "install-claude: already installed at {{home}}/.local/bin/claude, skipping"
+        exit 0
+    fi
+    echo "install-claude: running official installer (curl | bash)"
+    curl -fsSL https://claude.ai/install.sh | bash
+
+# Ensure firefox has a default-release profile by launching it briefly headless
+firefox-profile-init:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if compgen -G "$HOME/.mozilla/firefox/*.default-release" > /dev/null 2>&1; then
+        echo "firefox-profile-init: profile already exists, skipping"
+        exit 0
+    fi
+    if ! command -v firefox > /dev/null; then
+        echo "firefox-profile-init: firefox not installed, skipping" >&2
+        exit 0
+    fi
+    echo "firefox-profile-init: launching firefox --headless briefly to create profile"
+    firefox --headless &
+    pid=$!
+    sleep 5
+    kill "$pid" 2>/dev/null || true
+    wait "$pid" 2>/dev/null || true
+
+# Full deploy for the given type
+deploy-all type="base": host-init
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just stow-all {{type}}
+    case "{{type}}" in
+        production|all)
+            just install-claude
+            just claude-deploy
+            just firefox-profile-init
+            just firefox-deploy
+            ;;
+    esac
+
+# First-time setup: preflight + install deps + deploy
+bootstrap type="base": (_preflight type) (install-deps type) (deploy-all type)
     @echo ''
     @echo 'Bootstrap complete. Manual steps remaining:'
     @echo '  1. chsh -s $(which zsh)     # set zsh as default login shell'

@@ -1,0 +1,7 @@
+# Laptop Hyprland overrides. Symlinked into place by `just host-init`
+# when /sys/class/power_supply/BAT* exists.
+
+monitor = eDP-1, preferred, auto, 2
+
+bindel = , XF86MonBrightnessUp,   exec, brightnessctl -e4 -n2 set 5%+
+bindel = , XF86MonBrightnessDown, exec, brightnessctl -e4 -n2 set 5%-
