@@ -31,6 +31,13 @@ jobs:
           mv "$GITHUB_WORKSPACE/dotfiles" "$AB_HOME/.dotfiles"
           chown -R ab:ab "$AB_HOME"
 
+      - name: Enable multilib (needed to resolve `steam` from the gaming bundle)
+        run: |
+          if ! grep -qE '^\[multilib\]' /etc/pacman.conf; then
+            printf '\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> /etc/pacman.conf
+          fi
+          pacman -Sy --noconfirm
+
       - name: Install non-GUI subset
         run: |
           pacman -Syu --noconfirm --needed \
