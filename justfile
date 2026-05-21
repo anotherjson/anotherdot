@@ -81,17 +81,27 @@ firefox-deploy:
 
 # ── Stow wrappers ─────────────────────────────────────────────────
 
-# Stow a single package
+# Stow a single package (auto-runs host-init for hypr/waybar)
 stow package:
+    #!/usr/bin/env bash
+    set -euo pipefail
     stow -d "{{dotfiles}}" -t "{{home}}" {{package}}
+    case "{{package}}" in
+        hypr|waybar) just host-init ;;
+    esac
 
 # Unstow a single package
 unstow package:
     stow -d "{{dotfiles}}" -t "{{home}}" -D {{package}}
 
-# Restow a package (unstow + stow)
+# Restow a package: unstow + stow (auto-runs host-init for hypr/waybar)
 restow package:
+    #!/usr/bin/env bash
+    set -euo pipefail
     stow -d "{{dotfiles}}" -t "{{home}}" -R {{package}}
+    case "{{package}}" in
+        hypr|waybar) just host-init ;;
+    esac
 
 # ── Bootstrap ────────────────────────────────────────────────────
 
@@ -120,16 +130,6 @@ _pkgs-for type:
         production) echo "{{_pkgs_base}} {{_pkgs_production_extras}}";;
         gaming)     echo "{{_pkgs_base}} {{_pkgs_gaming_extras}}";;
         all)        echo "{{_pkgs_base}} {{_pkgs_production_extras}} {{_pkgs_gaming_extras}}";;
-        *) echo "unknown type: {{type}}. Valid: base, production, gaming, all" >&2; exit 1;;
-    esac
-
-# Resolve a type → space-separated stow package list
-_stow-for type:
-    #!/usr/bin/env bash
-    base="hypr waybar wofi kitty wezterm nvim zsh starship gtk udiskie backgrounds"
-    case "{{type}}" in
-        base|gaming)    echo "$base";;
-        production|all) echo "$base gemini opencode";;
         *) echo "unknown type: {{type}}. Valid: base, production, gaming, all" >&2; exit 1;;
     esac
 
@@ -245,8 +245,10 @@ firefox-profile-init:
         exit 0
     fi
     if ! command -v firefox > /dev/null; then
-        echo "firefox-profile-init: firefox not installed, skipping" >&2
-        exit 0
+        echo "ERROR: firefox-profile-init: firefox not installed." >&2
+        echo "  This recipe runs only via the production/all deploy path," >&2
+        echo "  which should have installed firefox via install-deps." >&2
+        exit 1
     fi
     echo "firefox-profile-init: launching firefox --headless briefly to create profile"
     firefox --headless &

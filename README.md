@@ -28,6 +28,7 @@ Each top-level directory is a stow package mirroring its target path inside
 | [`claude`](claude/README.md) | Claude Code config (copy-based) |
 | `gemini` | Gemini CLI config |
 | [`opencode`](opencode/README.md) | opencode TUI agent (bundled free model, no account) |
+| `udiskie` | Removable-media automount tray |
 | `backgrounds` | Wallpapers |
 
 Platform-specific setup quicknotes live in [`guides/`](guides/):
@@ -57,14 +58,9 @@ cd ~/.dotfiles
 just bootstrap
 ```
 
-`just bootstrap` runs `_preflight`, `install-deps` (`yay -S --needed` for
-the system-package list), and `deploy` (stows packages, runs host-init for
-laptop-vs-desktop config variants, and for production/all runs the Claude
-and Firefox special-case deploys). At the end it prints any manual steps
-remaining — notably setting zsh as the default shell and reloading Hyprland.
-
-Pass `type=...` to select a bundle — see
-[`guides/host-config.md`](guides/host-config.md).
+Defaults to the `base` bundle. Pass `type=production|gaming|all` to install
+more — see [`guides/host-config.md`](guides/host-config.md) for what each
+bundle includes and how the laptop/desktop autodetect works.
 
 ## Day-to-day commands
 
