@@ -20,7 +20,7 @@ assert_resolves_to() {
     }
 }
 
-# stow-all linked the hypr package
+# stow-bundle linked the hypr package
 assert_resolves_to "$HOME/.config/hypr/hyprland.conf" \
     "$dotfiles/hypr/.config/hypr/hyprland.conf"
 
@@ -59,32 +59,25 @@ assert_resolves_to "$HOME/.config/starship.toml" \
 # zsh package (top-level dotfile)
 assert_resolves_to "$HOME/.zshrc" "$dotfiles/zsh/.zshrc"
 
-# claude-deploy is copy-based — files must exist and NOT be symlinks
-[ -f "$HOME/.claude/settings.json" ] \
-    || { echo "FAIL: ~/.claude/settings.json missing"; exit 1; }
-[ ! -L "$HOME/.claude/settings.json" ] \
-    || { echo "FAIL: ~/.claude/settings.json is a symlink (should be a copy)"; exit 1; }
-cmp -s "$HOME/.claude/settings.json" "$dotfiles/claude/settings.json" \
-    || { echo "FAIL: ~/.claude/settings.json content differs from repo"; exit 1; }
-[ -f "$HOME/.claude/CLAUDE.md" ] \
-    || { echo "FAIL: ~/.claude/CLAUDE.md missing"; exit 1; }
-
-# claude/ and guides/ must be excluded from stow-all
+# claude/ and guides/ must be excluded from stow-bundle
 [ ! -L "$HOME/.config/claude" ] \
     || { echo "FAIL: claude/ got stowed"; exit 1; }
 [ ! -e "$HOME/guides" ] \
     || { echo "FAIL: guides/ got stowed"; exit 1; }
 
-# firefox-deploy linked chrome/ into the fake profile
-profile="$HOME/.mozilla/firefox/test.default-release"
-[ -L "$profile/chrome" ] \
-    || { echo "FAIL: $profile/chrome is not a symlink"; exit 1; }
-target="$(readlink "$profile/chrome")"
-[ "$target" = "$dotfiles/firefox/chrome" ] || {
-    echo "FAIL: firefox chrome/ symlink"
-    echo "  expected: $dotfiles/firefox/chrome"
-    echo "  actual:   $target"
-    exit 1
-}
+# Production-only stow packages must NOT land for base
+[ ! -e "$HOME/.config/opencode" ] \
+    || { echo "FAIL: opencode/ stowed for base (should be production-only)"; exit 1; }
+[ ! -e "$HOME/.config/gemini" ] \
+    || { echo "FAIL: gemini/ stowed for base (should be production-only)"; exit 1; }
+
+# install-claude must not have run for base (the $CI guard is verified in a
+# dedicated workflow step; assert defensively here too)
+[ ! -x "$HOME/.local/bin/claude" ] \
+    || { echo "FAIL: claude binary present after base deploy"; exit 1; }
+
+# claude-deploy must not have run for base
+[ ! -e "$HOME/.claude/settings.json" ] \
+    || { echo "FAIL: ~/.claude/settings.json present after base deploy"; exit 1; }
 
 echo "all assertions passed"

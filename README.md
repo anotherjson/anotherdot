@@ -54,47 +54,26 @@ repo, then bootstrap from inside it:
 ```zsh
 git clone https://github.com/anotherjson/anotherdot.git ~/.dotfiles
 cd ~/.dotfiles
-just bootstrap                  # defaults to type=base
-just bootstrap type=production  # base + firefox/nautilus/darktable + claude/gemini/opencode
-just bootstrap type=gaming      # base + steam (strict — no firefox/claude/gemini)
-just bootstrap type=all         # everything
+just bootstrap
 ```
 
-| Type         | What's installed                                                                                                                  |
-|--------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| `base`       | Hyprland WM stack, terminals, editor, shell, audio, theme/font, dotfile tooling. Minimal usable Hyprland desktop.                 |
-| `production` | `base` + firefox, nautilus, darktable, opencode. Stows gemini + opencode configs. Runs claude/firefox deploys.                    |
-| `gaming`     | `base` + steam. Requires `[multilib]` enabled in `/etc/pacman.conf`. Intentionally strict — no AI/browser tooling.                |
-| `all`        | Union of `production` + `gaming`. Multilib required.                                                                              |
+`just bootstrap` runs `_preflight`, `install-deps` (`yay -S --needed` for
+the system-package list), and `deploy` (stows packages, runs host-init for
+laptop-vs-desktop config variants, and for production/all runs the Claude
+and Firefox special-case deploys). At the end it prints any manual steps
+remaining — notably setting zsh as the default shell and reloading Hyprland.
 
-`just bootstrap` runs three recipes: `_preflight` (validates required
-commands and, for gaming/all, multilib), `install-deps` (`yay -S --needed`
-for the bundle), and `deploy-all` (stows the relevant packages, runs
-`host-init` to symlink laptop-vs-desktop config variants, and for
-production/all runs the Claude and Firefox special-case deploys). At the
-end it prints any manual steps remaining — notably setting zsh as the
-default shell and reloading Hyprland.
-
-`host-init` autodetects laptop vs. desktop via `/sys/class/power_supply/BAT*`
-and links the right variant from `hosts/`. See
-[`guides/host-config.md`](guides/host-config.md) for details and how to
-force-override.
-
-To inspect what `install-deps` will install for a given type:
-
-```zsh
-just install-deps-list <type>
-```
+Pass `type=...` to select a bundle — see
+[`guides/host-config.md`](guides/host-config.md).
 
 ## Day-to-day commands
 
 ```zsh
-dots stow <pkg>            # stow a single package
-dots restow <pkg>          # unstow + stow (after package changes)
-dots unstow <pkg>          # remove the symlinks
-dots stow-all [type]       # stow the packages for the given type (default: base)
-dots deploy-all [type]     # host-init + stow-all + (production: claude + firefox)
-dots host-init             # re-detect laptop/desktop and refresh host.{conf,jsonc}
+dots stow <pkg>      # stow a single package
+dots restow <pkg>    # unstow + stow (after package changes)
+dots unstow <pkg>    # remove the symlinks
+dots stow-bundle     # stow every package for the given type
+dots deploy          # stow-bundle + host-init + (production: claude + firefox)
 ```
 
 ## Firefox config

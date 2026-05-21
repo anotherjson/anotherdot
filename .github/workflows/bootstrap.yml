@@ -31,6 +31,9 @@ jobs:
           mv "$GITHUB_WORKSPACE/dotfiles" "$AB_HOME/.dotfiles"
           chown -R ab:ab "$AB_HOME"
 
+      # Mirrors the multilib check in justfile's _preflight; both must stay in
+      # sync. CI is the only place we *enable* multilib non-interactively; users
+      # get a clear error message from _preflight on real machines.
       - name: Enable multilib (needed to resolve `steam` from the gaming bundle)
         run: |
           if ! grep -qE '^\[multilib\]' /etc/pacman.conf; then
@@ -58,17 +61,27 @@ jobs:
             exit $failed
           '
 
-      - name: Fake firefox profile
-        run: runuser -u ab -- mkdir -p "$AB_HOME/.mozilla/firefox/test.default-release"
+      - name: Verify install-claude CI guard
+        run: |
+          runuser -u ab -- bash -lc '
+            set -euo pipefail
+            cd "$HOME/.dotfiles"
+            output=$(just install-claude)
+            echo "$output"
+            echo "$output" | grep -q "CI detected" \
+                || { echo "FAIL: install-claude did not detect CI"; exit 1; }
+            [ ! -x "$HOME/.local/bin/claude" ] \
+                || { echo "FAIL: claude binary appeared despite CI guard"; exit 1; }
+          '
 
-      - name: First deploy-all
-        run: runuser -u ab -- bash -lc 'cd "$HOME/.dotfiles" && just deploy-all production'
+      - name: First deploy
+        run: runuser -u ab -- bash -lc 'cd "$HOME/.dotfiles" && just deploy base'
 
       - name: Assert deploy outcomes
         run: runuser -u ab -- bash "$AB_HOME/.dotfiles/.github/workflows/assert-bootstrap.sh"
 
-      - name: Second deploy-all (idempotency)
-        run: runuser -u ab -- bash -lc 'cd "$HOME/.dotfiles" && just deploy-all production'
+      - name: Second deploy (idempotency)
+        run: runuser -u ab -- bash -lc 'cd "$HOME/.dotfiles" && just deploy base'
 
       - name: Re-assert after second run
         run: runuser -u ab -- bash "$AB_HOME/.dotfiles/.github/workflows/assert-bootstrap.sh"

@@ -30,7 +30,7 @@ this before any install.
 
 ## Per-host autodetect
 
-`just host-init` (also run automatically as part of `deploy-all`) detects
+`just host-init` (also run automatically as part of `deploy`) detects
 whether the machine is a laptop by checking for `/sys/class/power_supply/BAT*`
 and symlinks the matching variant from `hosts/`:
 
@@ -47,6 +47,14 @@ hosts/
 Output goes to `~/.config/hypr/host.conf` and `~/.config/waybar/host.jsonc`.
 The main Hyprland config sources the first; the main waybar config
 includes the second.
+
+The laptop branch is exercised only by manual runs on a laptop; CI covers
+the desktop branch and the symlink mechanics.
+
+CI tests the `base` type only. Production-specific recipes (`claude-deploy`,
+`firefox-deploy`, `install-claude`, `firefox-profile-init`) are exercised
+manually via `just bootstrap type=production` on real hardware — see the
+verification section of any change that touches them.
 
 ## Force-overriding the autodetect
 

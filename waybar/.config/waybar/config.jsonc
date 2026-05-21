@@ -129,20 +129,6 @@
         "format-alt": "<span size='13000'>{icon} </span> {temperatureF}°F",
     },
     // backlight + battery modules (laptop-only) live in host.jsonc.laptop.
-    // "battery#bat2": {
-    //     "bat": "BAT2"
-    // },
-    // "power-profiles-daemon": {
-    //   "format": "{icon}",
-    //   "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
-    //   "tooltip": true,
-    //   "format-icons": {
-    //     "default": "",
-    //     "performance": "",
-    //     "balanced": "",
-    //     "power-saver": ""
-    //   }
-    // },
     "network": {
         // "interface": "wlp2*", // (Optional) To force the use of this interface
         // "format-wifi": "<span size='13000'> </span>{essid} ({signalStrength}%) ",
