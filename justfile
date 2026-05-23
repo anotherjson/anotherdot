@@ -263,6 +263,29 @@ deploy type="base": (_preflight type)
             ;;
     esac
 
+# Enable TTY1 autologin so Hyprland can launch directly via ~/.zlogin
+# without a TTY login prompt. Skipped if a display manager is already
+# enabled (sddm/gdm/greetd/ly/lightdm) — DM handles the boot path and
+# autologin would race with it.
+enable-tty-autologin:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if systemctl list-unit-files --state=enabled 2>/dev/null \
+        | grep -iqE '^(sddm|gdm|greetd|ly|lightdm)\.service'; then
+        echo "enable-tty-autologin: display manager is enabled, skipping autologin override."
+        exit 0
+    fi
+    override_dir=/etc/systemd/system/getty@tty1.service.d
+    override_file="$override_dir/autologin.conf"
+    sudo mkdir -p "$override_dir"
+    sudo tee "$override_file" > /dev/null <<EOF
+    [Service]
+    ExecStart=
+    ExecStart=-/usr/bin/agetty --autologin $USER --noclear %I \$TERM
+    EOF
+    sudo systemctl daemon-reload
+    echo "enable-tty-autologin: wrote $override_file"
+
 # First-time setup: preflight + install deps + deploy
 bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo ''
@@ -270,6 +293,7 @@ bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @sudo chsh -s "$(command -v zsh)" "$USER"
     @echo 'Enabling udisks2 (system service that udiskie listens to for automount)...'
     @sudo systemctl enable --now udisks2
+    @just enable-tty-autologin
     @echo ''
     @echo 'Bootstrap complete. Manual steps remaining:'
     @echo '  1. Restart your session (log out + back in, or reboot) to apply configs — login shell, Hyprland, GTK theme, .zshrc env'
