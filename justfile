@@ -173,8 +173,9 @@ _preflight type:
     case "{{type}}" in
         gaming|all)
             if ! grep -qE '^\[multilib\]' /etc/pacman.conf; then
-                echo "ERROR: type={{type}} needs steam, which requires the multilib repo." >&2
-                echo "Enable it: uncomment [multilib] in /etc/pacman.conf, then run 'sudo pacman -Syu'." >&2
+                echo "ERROR: the '{{type}}' bundle installs steam, which requires the multilib repo." >&2
+                echo "Enable it: uncomment [multilib] and its Include line in /etc/pacman.conf," >&2
+                echo "then refresh: 'sudo pacman -Sy'." >&2
                 exit 1
             fi
             ;;
