@@ -329,6 +329,56 @@ harden-sshd:
     }
     echo "harden-sshd: wrote $drop, sshd reloaded"
 
+# Diagnose hyprpaper not displaying wallpaper. Run on the affected host.
+# Read-only; no system modifications. Save with redirect for sharing:
+#   just diagnose-hyprpaper > /tmp/hyprpaper-diag.txt 2>&1
+diagnose-hyprpaper:
+    #!/usr/bin/env bash
+    set +e
+    echo "=== hyprpaper version ==="
+    yay -Qi hyprpaper 2>/dev/null | grep -E '^(Name|Version)' || echo "not installed"
+    echo
+    echo "=== config file (~/.config/hypr/hyprpaper.conf) ==="
+    if [ -L ~/.config/hypr/hyprpaper.conf ]; then
+        echo "symlink → $(readlink -f ~/.config/hypr/hyprpaper.conf)"
+    elif [ -f ~/.config/hypr/hyprpaper.conf ]; then
+        echo "regular file"
+    else
+        echo "MISSING"
+    fi
+    cat ~/.config/hypr/hyprpaper.conf 2>/dev/null
+    echo
+    echo "=== wallpaper file resolution ==="
+    echo "\$HOME = $HOME"
+    echo "expanded path = $HOME/.config/backgrounds/Gemini_Generated_Image_hsu92jhsu92jhsu9.png"
+    ls -lL "$HOME/.config/backgrounds/" 2>&1 | head -10
+    echo
+    echo "=== exec-once chain processes (the smoking gun) ==="
+    echo "If any of these are missing, the hyprland.conf:59 chain failed somewhere."
+    for proc in waybar wofi hypridle hyprpaper udiskie hyprlock; do
+        if pgrep -x "$proc" >/dev/null 2>&1; then
+            echo "  RUNNING:  $proc ($(pgrep -x $proc | tr '\n' ',' | sed 's/,$//'))"
+        else
+            echo "  MISSING:  $proc"
+        fi
+    done
+    echo
+    echo "=== host.conf symlink target (desktop vs laptop variant) ==="
+    if [ -L ~/.config/hypr/host.conf ]; then
+        echo "→ $(readlink -f ~/.config/hypr/host.conf)"
+    else
+        echo "NOT A SYMLINK or MISSING"
+    fi
+    echo
+    echo "=== hyprctl hyprpaper state ==="
+    hyprctl hyprpaper listactive 2>&1
+    echo
+    echo "=== connected monitors ==="
+    hyprctl monitors 2>&1 | grep -E '^(Monitor|	description)' | head -20
+    echo
+    echo "=== journal: 'paper' lines (last 10 minutes) ==="
+    journalctl --user --since "10 minutes ago" 2>/dev/null | grep -i paper | tail -50
+
 # First-time setup. Runs preflight → install-deps → deploy, then
 # system-level activation: chsh to zsh, enable udisks2, configure TTY1
 # autologin (no-DM hosts), harden sshd (if active). sudo cache is primed
