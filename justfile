@@ -111,8 +111,9 @@ restow package:
 
 # ── Bootstrap ────────────────────────────────────────────────────
 
-# git/stow/just/yay must be installed manually before `just bootstrap` can
-# start (see _preflight). They're listed here so subsequent runs keep them
+# git/just/yay must be installed manually before `just bootstrap` can
+# start (see _preflight). stow is pulled in by install-deps. These
+# tools are also listed in _pkgs_base so subsequent runs keep them
 # updated via yay -S --needed.
 # Package bundles per type. Add new packages here.
 _pkgs_base := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
@@ -328,7 +329,10 @@ harden-sshd:
     }
     echo "harden-sshd: wrote $drop, sshd reloaded"
 
-# First-time setup: preflight + install deps + deploy
+# First-time setup. Runs preflight → install-deps → deploy, then
+# system-level activation: chsh to zsh, enable udisks2, configure TTY1
+# autologin (no-DM hosts), harden sshd (if active). sudo cache is primed
+# at start and refreshed after install-deps to minimize prompts.
 bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo ''
     @echo 'Priming sudo cache (you may be prompted once)...'
@@ -342,6 +346,14 @@ bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @just enable-tty-autologin
     @just harden-sshd
     @echo ''
-    @echo 'Bootstrap complete. Manual steps remaining:'
-    @echo '  1. Restart your session (log out + back in, or reboot) to apply configs — login shell, Hyprland, GTK theme, .zshrc env'
+    @echo 'Bootstrap complete.'
+    @echo ''
+    @echo 'Behavior changes that take effect on next session/reboot:'
+    @echo '  - login shell is now zsh (active on next login)'
+    @echo '  - on no-DM hosts: TTY1 auto-logs you in and Hyprland starts at boot'
+    @echo '  - if sshd was active: password auth and root password login are now disabled'
+    @echo '  - udisks2 is enabled (udiskie automount tray works)'
+    @echo ''
+    @echo 'Manual steps remaining:'
+    @echo '  1. Restart your session (log out + back in, or reboot) to apply all configs'
     @echo '  2. (production|all only) launch firefox once from Hyprland, then `just firefox-deploy` to install userChrome'
