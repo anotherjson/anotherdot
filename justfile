@@ -74,8 +74,15 @@ claude-status:
 # Link firefox/chrome/ into the active Firefox profile
 firefox-deploy:
     #!/usr/bin/env bash
-    profile=$(find ~/.mozilla/firefox -maxdepth 1 -name "*.default-release" -type d | head -1)
-    if [ -z "$profile" ]; then echo "no firefox profile found"; exit 1; fi
+    profile=$(find ~/.mozilla/firefox -maxdepth 1 -name "*.default-release" -type d 2>/dev/null | head -1)
+    if [ -z "$profile" ]; then
+        if [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]; then
+            echo "firefox-deploy: no profile yet AND no graphical session — skipping."
+            echo "  Re-run from inside Hyprland: 'just firefox-profile-init && just firefox-deploy'"
+            exit 0
+        fi
+        echo "no firefox profile found"; exit 1
+    fi
     ln -sfn "{{dotfiles}}/firefox/chrome" "$profile/chrome"
     echo "firefox chrome/ linked to $profile/chrome"
 
@@ -249,6 +256,12 @@ firefox-profile-init:
     set -euo pipefail
     if compgen -G "$HOME/.mozilla/firefox/*.default-release" > /dev/null 2>&1; then
         echo "firefox-profile-init: profile already exists, skipping"
+        exit 0
+    fi
+    if [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]; then
+        echo "firefox-profile-init: no graphical session (DISPLAY/WAYLAND_DISPLAY unset)."
+        echo "  firefox --headless still needs DRM + session bus; skipping for now."
+        echo "  Re-run from inside Hyprland: 'just firefox-profile-init && just firefox-deploy'"
         exit 0
     fi
     if ! command -v firefox > /dev/null; then
