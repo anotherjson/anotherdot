@@ -143,11 +143,15 @@ _preflight type:
     #!/usr/bin/env bash
     set -euo pipefail
     case "{{type}}" in
+        type=*)
+            echo "ERROR: 'type=...' is just's variable-override syntax, not a recipe argument." >&2
+            echo "Use positional form: just bootstrap <base|production|gaming|all>" >&2
+            exit 1;;
         base|production|gaming|all) ;;
         *) echo "ERROR: unknown type: {{type}}. Valid: base, production, gaming, all" >&2; exit 1;;
     esac
     missing=()
-    for cmd in yay git stow; do
+    for cmd in yay git; do
         command -v "$cmd" >/dev/null 2>&1 || missing+=("$cmd")
     done
     case "{{type}}" in
@@ -157,7 +161,9 @@ _preflight type:
     esac
     if [ "${#missing[@]}" -ne 0 ]; then
         echo "ERROR: required commands missing: ${missing[*]}" >&2
-        echo "On Arch: 'sudo pacman -S --needed git base-devel stow curl', then build yay+just from AUR." >&2
+        echo "Prerequisites (per README): git, just, yay. For production|all also: curl." >&2
+        echo "yay itself is built from AUR and needs git + base-devel; once yay is in place" >&2
+        echo "it can install everything else, including stow (pulled in by 'just install-deps')." >&2
         exit 1
     fi
     if [ ! -f "{{dotfiles}}/justfile" ]; then

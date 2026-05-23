@@ -7,7 +7,7 @@ typed bootstrap (chooses *what* to install) and host autodetect (chooses
 ## Typed bootstrap
 
 ```zsh
-just bootstrap type=<base|production|gaming|all>
+just bootstrap <base|production|gaming|all>
 ```
 
 | Type         | System packages                                                | Stow packages                          |
@@ -57,7 +57,7 @@ the desktop branch and the symlink mechanics.
 
 CI tests the `base` type only. Production-specific recipes (`claude-deploy`,
 `firefox-deploy`, `install-claude`, `firefox-profile-init`) are exercised
-manually via `just bootstrap type=production` on real hardware — see the
+manually via `just bootstrap production` on real hardware — see the
 verification section of any change that touches them.
 
 ## Force-overriding the autodetect
