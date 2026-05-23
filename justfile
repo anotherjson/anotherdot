@@ -154,7 +154,10 @@ _preflight type:
             echo "Use positional form: just bootstrap <base|production|gaming|all>" >&2
             exit 1;;
         base|production|gaming|all) ;;
-        *) echo "ERROR: unknown type: {{type}}. Valid: base, production, gaming, all" >&2; exit 1;;
+        *)
+            echo "ERROR: unknown type: {{type}}. Valid: base, production, gaming, all" >&2
+            echo "  e.g. just bootstrap production" >&2
+            exit 1;;
     esac
     missing=()
     for cmd in yay git; do
@@ -275,13 +278,20 @@ enable-tty-autologin:
         echo "enable-tty-autologin: display manager is enabled, skipping autologin override."
         exit 0
     fi
+    user="${SUDO_USER:-$USER}"
+    if [[ "$user" == "root" ]]; then
+        echo "ERROR: refusing to configure root autologin." >&2
+        echo "  Run as a regular user without sudo: 'just bootstrap'." >&2
+        exit 1
+    fi
+    echo "enable-tty-autologin: configuring TTY1 autologin for user=$user"
     override_dir=/etc/systemd/system/getty@tty1.service.d
     override_file="$override_dir/autologin.conf"
     sudo mkdir -p "$override_dir"
     sudo tee "$override_file" > /dev/null <<EOF
     [Service]
     ExecStart=
-    ExecStart=-/usr/bin/agetty --autologin $USER --noclear %I \$TERM
+    ExecStart=-/usr/bin/agetty --autologin $user --noclear %I \$TERM
     EOF
     sudo systemctl daemon-reload
     echo "enable-tty-autologin: wrote $override_file"
@@ -300,20 +310,33 @@ harden-sshd:
     fi
     drop=/etc/ssh/sshd_config.d/99-dotfiles-hardening.conf
     sudo mkdir -p /etc/ssh/sshd_config.d
-    sudo tee "$drop" > /dev/null <<EOF
+    tmp=$(sudo mktemp /etc/ssh/sshd_config.d/.99-dotfiles-hardening.XXXXXX)
+    sudo tee "$tmp" > /dev/null <<EOF
     # Managed by anotherdot dotfiles (justfile harden-sshd recipe).
     PasswordAuthentication no
     PermitRootLogin prohibit-password
     EOF
-    sudo sshd -t
-    sudo systemctl reload sshd 2>/dev/null || sudo systemctl restart sshd
+    if ! sudo sshd -t; then
+        echo "harden-sshd: sshd -t failed; rolling back tempfile." >&2
+        sudo rm -f "$tmp"
+        exit 1
+    fi
+    sudo mv "$tmp" "$drop"
+    sudo systemctl reload sshd 2>/dev/null || {
+        echo "harden-sshd: reload failed, restarting sshd — active ssh sessions may drop" >&2
+        sudo systemctl restart sshd
+    }
     echo "harden-sshd: wrote $drop, sshd reloaded"
 
 # First-time setup: preflight + install deps + deploy
 bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo ''
+    @echo 'Priming sudo cache (you may be prompted once)...'
+    @sudo -v
     @echo 'Setting login shell to zsh...'
     @sudo chsh -s "$(command -v zsh)" "$USER"
+    @echo 'Refreshing sudo cache after long-running install-deps...'
+    @sudo -v
     @echo 'Enabling udisks2 (system service that udiskie listens to for automount)...'
     @sudo systemctl enable --now udisks2
     @just enable-tty-autologin
