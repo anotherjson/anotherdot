@@ -7,7 +7,7 @@ PATH (guarded by `command -v pyenv`), so just install pyenv plus the
 support tools nvim needs, then re-source your shell:
 
 ```zsh
-yay -S --needed wget pyenv pyenv-virtualenv npm ripgrep fd fzf python-pip
+yay -Suy wget pyenv pyenv-virtualenv npm ripgrep fd fzf python-pip
 npm install -g tree-sitter-cli
 exec "$SHELL"
 pyenv virtualenv neovim
