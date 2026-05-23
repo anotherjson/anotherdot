@@ -1,3 +1,8 @@
 # Desktop Hyprland overrides. Symlinked into place by `just host-init`
-# when no battery is detected. Intentionally empty — the catch-all
+# when no battery is detected. The catch-all
 # `monitor=,preferred,auto,auto` in hyprland.conf covers desktop monitors.
+
+# Lock immediately on Hyprland launch. Desktop hosts use TTY1 autologin
+# (see `enable-tty-autologin` in justfile) instead of a display manager,
+# so hyprlock is the single auth gate at boot.
+exec-once = hyprlock
