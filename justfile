@@ -120,7 +120,7 @@ _pkgs_base := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland 
               "pipewire wireplumber pavucontrol libnotify " + \
               "kitty wezterm-git neovim zsh starship " + \
               "brightnessctl playerctl hyprshot " + \
-              "eza jq curl arch-update " + \
+              "eza jq curl arch-update vlock " + \
               "adw-gtk-theme ttf-firacode-nerd " + \
               "stow just git " + \
               "udiskie exfatprogs"
@@ -286,6 +286,29 @@ enable-tty-autologin:
     sudo systemctl daemon-reload
     echo "enable-tty-autologin: wrote $override_file"
 
+# Drop in `sshd_config.d/99-dotfiles-hardening.conf` to disable password
+# auth and root password login. Skipped if sshd is neither enabled nor
+# active (no point hardening a service that isn't running). Uses a
+# drop-in so pacman updates to /etc/ssh/sshd_config don't clobber it.
+harden-sshd:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! systemctl is-enabled sshd >/dev/null 2>&1 \
+        && ! systemctl is-active sshd >/dev/null 2>&1; then
+        echo "harden-sshd: sshd not enabled or active, skipping."
+        exit 0
+    fi
+    drop=/etc/ssh/sshd_config.d/99-dotfiles-hardening.conf
+    sudo mkdir -p /etc/ssh/sshd_config.d
+    sudo tee "$drop" > /dev/null <<EOF
+    # Managed by anotherdot dotfiles (justfile harden-sshd recipe).
+    PasswordAuthentication no
+    PermitRootLogin prohibit-password
+    EOF
+    sudo sshd -t
+    sudo systemctl reload sshd 2>/dev/null || sudo systemctl restart sshd
+    echo "harden-sshd: wrote $drop, sshd reloaded"
+
 # First-time setup: preflight + install deps + deploy
 bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo ''
@@ -294,6 +317,7 @@ bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo 'Enabling udisks2 (system service that udiskie listens to for automount)...'
     @sudo systemctl enable --now udisks2
     @just enable-tty-autologin
+    @just harden-sshd
     @echo ''
     @echo 'Bootstrap complete. Manual steps remaining:'
     @echo '  1. Restart your session (log out + back in, or reboot) to apply configs — login shell, Hyprland, GTK theme, .zshrc env'
