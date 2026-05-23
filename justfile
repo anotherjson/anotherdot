@@ -266,10 +266,12 @@ deploy type="base": (_preflight type)
 # First-time setup: preflight + install deps + deploy
 bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo ''
+    @echo 'Enabling udisks2 (system service that udiskie listens to for automount)...'
+    @sudo systemctl enable --now udisks2
+    @echo ''
     @echo 'Bootstrap complete. Manual steps remaining:'
     @echo '  1. chsh -s $(which zsh)     # set zsh as default login shell'
     @echo '  2. Reload Hyprland (Super+Shift+C) to apply config'
     @echo '  3. Log out and back in once for GTK theme to fully apply'
     @echo '  4. Open a new shell so .zshrc loads (dots alias becomes available)'
-    @echo '  5. sudo systemctl enable --now udisks2     # enable removable-media automount for udiskie'
-    @echo '  6. (production|all only) launch firefox once from Hyprland, then `just firefox-deploy` to install userChrome'
+    @echo '  5. (production|all only) launch firefox once from Hyprland, then `just firefox-deploy` to install userChrome'
