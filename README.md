@@ -58,9 +58,10 @@ cd ~/.dotfiles
 just bootstrap
 ```
 
-Defaults to the `base` bundle. Pass `type=production|gaming|all` to install
-more — see [`guides/host-config.md`](guides/host-config.md) for what each
-bundle includes and how the laptop/desktop autodetect works.
+Defaults to the `base` bundle. Pass `production`, `gaming`, or `all` as a
+positional argument to install more — e.g. `just bootstrap all`. See
+[`guides/host-config.md`](guides/host-config.md) for what each bundle includes
+and how the laptop/desktop autodetect works.
 
 ## Day-to-day commands
 
