@@ -311,7 +311,7 @@ harden-sshd:
     fi
     drop=/etc/ssh/sshd_config.d/99-dotfiles-hardening.conf
     sudo mkdir -p /etc/ssh/sshd_config.d
-    tmp=$(sudo mktemp /etc/ssh/sshd_config.d/.99-dotfiles-hardening.XXXXXX)
+    tmp=$(sudo mktemp --suffix=.conf /etc/ssh/sshd_config.d/99-dotfiles-hardening.XXXXXX)
     sudo tee "$tmp" > /dev/null <<EOF
     # Managed by anotherdot dotfiles (justfile harden-sshd recipe).
     PasswordAuthentication no
