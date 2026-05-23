@@ -120,7 +120,7 @@ _pkgs_base := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland 
               "pipewire wireplumber pavucontrol libnotify " + \
               "kitty wezterm-git neovim zsh starship " + \
               "brightnessctl playerctl hyprshot " + \
-              "eza jq curl " + \
+              "eza jq curl arch-update " + \
               "adw-gtk-theme ttf-firacode-nerd " + \
               "stow just git " + \
               "udiskie exfatprogs"
