@@ -272,7 +272,5 @@ bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @sudo systemctl enable --now udisks2
     @echo ''
     @echo 'Bootstrap complete. Manual steps remaining:'
-    @echo '  1. Reload Hyprland (Super+Shift+C) to apply config'
-    @echo '  2. Log out and back in once — for GTK theme to fully apply AND for the new zsh login shell to take effect'
-    @echo '  3. Open a new shell so .zshrc loads (dots alias becomes available)'
-    @echo '  4. (production|all only) launch firefox once from Hyprland, then `just firefox-deploy` to install userChrome'
+    @echo '  1. Restart your session (log out + back in, or reboot) to apply configs — login shell, Hyprland, GTK theme, .zshrc env'
+    @echo '  2. (production|all only) launch firefox once from Hyprland, then `just firefox-deploy` to install userChrome'
