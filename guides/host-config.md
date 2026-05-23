@@ -43,6 +43,31 @@ shell + login flow rather than incidental tooling — removing them from
 - `vlock` — locks TTY1 if Hyprland exits, preventing exposure of the
   autologged-in shell (see `~/.zlogin`)
 
+## Boot model (no display manager)
+
+On hosts without a display manager (`sddm`/`gdm`/`greetd`/`ly`/`lightdm`),
+bootstrap wires up a single-auth boot flow via three coordinated pieces:
+
+1. `just enable-tty-autologin` writes
+   `/etc/systemd/system/getty@tty1.service.d/autologin.conf` so TTY1 boots
+   straight to a logged-in shell. Skipped if a display manager is enabled
+   (DM owns the boot path). Refuses to run as root to prevent baking
+   `--autologin root` into the override.
+2. `~/.zlogin` (zsh login-shell hook) gates on `/dev/tty1` and execs
+   `start-hyprland`. On Hyprland exit it execs `vlock` to lock the VT so
+   the autologged-in shell isn't exposed. A `HYPRLAND_LAUNCH_GUARD` env
+   prevents a tight loop in the pathological case where both Hyprland and
+   vlock are missing.
+3. `hosts/hypr/host.conf.desktop` sets `exec-once = hyprlock` so the
+   desktop boots straight into a locked screen — hyprlock becomes the
+   single auth gate.
+
+`just harden-sshd` (also run by `bootstrap` when sshd is active or enabled)
+drops `99-dotfiles-hardening.conf` into `/etc/ssh/sshd_config.d/` to
+disable `PasswordAuthentication` and root-password login. The drop-in is
+written to a tempfile, validated with `sshd -t`, then `mv`'d into place,
+so a broken config never lands.
+
 ## Per-host autodetect
 
 `just host-init` (also run automatically as part of `deploy`) detects
@@ -53,7 +78,7 @@ and symlinks the matching variant from `hosts/`:
 hosts/
 ├── hypr/
 │   ├── host.conf.laptop     # eDP-1 monitor, brightness keybinds
-│   └── host.conf.desktop    # empty (catch-all monitor= already covers it)
+│   └── host.conf.desktop    # exec-once = hyprlock (lock-at-boot for no-DM hosts)
 └── waybar/
     ├── host.jsonc.laptop    # modules-right with battery + backlight
     └── host.jsonc.desktop   # modules-right without battery/backlight

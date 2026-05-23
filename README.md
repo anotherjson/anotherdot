@@ -63,6 +63,13 @@ positional argument to install more — e.g. `just bootstrap all`. See
 [`guides/host-config.md`](guides/host-config.md) for what each bundle includes
 and how the laptop/desktop autodetect works.
 
+Bootstrap also makes a few system-level changes after the package install:
+sets the login shell to zsh, enables `udisks2` (for the udiskie automount
+tray), and on machines without a display manager it configures TTY1
+autologin and hardens sshd (drop-in disabling password auth + root password
+login, if sshd is active). See
+[`guides/host-config.md`](guides/host-config.md) for the boot model.
+
 ## Day-to-day commands
 
 ```zsh
