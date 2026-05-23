@@ -34,6 +34,15 @@ launch, and `--headless` first-run has been flaky across versions.
 `/etc/pacman.conf` (steam pulls lib32-* dependencies). `_preflight` checks
 this before any install.
 
+A few packages in the `base` bundle are load-bearing for the shipped
+shell + login flow rather than incidental tooling — removing them from
+`_pkgs_base` will break the corresponding alias or security guarantee:
+
+- `eza` — backs the `ls` alias in `.zshrc`
+- `arch-update` — backs the `update` / `news` aliases in `.zshrc`
+- `vlock` — locks TTY1 if Hyprland exits, preventing exposure of the
+  autologged-in shell (see `~/.zlogin`)
+
 ## Per-host autodetect
 
 `just host-init` (also run automatically as part of `deploy`) detects
