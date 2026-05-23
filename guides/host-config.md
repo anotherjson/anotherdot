@@ -20,9 +20,15 @@ just bootstrap <base|production|gaming|all>
 `just bootstrap` with no argument defaults to `base`.
 
 `production` and `all` additionally run `install-claude` (curl installer),
-`claude-deploy` (copy claude/ config), `firefox-profile-init` (launch
-firefox headless once to seed a default profile), and `firefox-deploy`
-(symlink chrome/ into the profile).
+`claude-deploy` (copy claude/ config), and `firefox-deploy` (symlink
+chrome/ into the firefox profile).
+
+Firefox itself needs a one-time manual step: launch firefox interactively
+once from inside Hyprland so it seeds a `default-release` profile, then
+re-run `just firefox-deploy` to install the userChrome symlink. Bootstrap
+intentionally doesn't try to headless-init the profile — Firefox 67+'s
+profile-per-install lock rejects empty `-CreateProfile` dirs on first
+launch, and `--headless` first-run has been flaky across versions.
 
 `gaming` and `all` require the `[multilib]` repo enabled in
 `/etc/pacman.conf` (steam pulls lib32-* dependencies). `_preflight` checks
@@ -56,9 +62,9 @@ The laptop branch is exercised only by manual runs on a laptop; CI covers
 the desktop branch and the symlink mechanics.
 
 CI tests the `base` type only. Production-specific recipes (`claude-deploy`,
-`firefox-deploy`, `install-claude`, `firefox-profile-init`) are exercised
-manually via `just bootstrap production` on real hardware — see the
-verification section of any change that touches them.
+`firefox-deploy`, `install-claude`) are exercised manually via
+`just bootstrap production` on real hardware — see the verification section
+of any change that touches them.
 
 ## Force-overriding the autodetect
 

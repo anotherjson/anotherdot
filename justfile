@@ -76,12 +76,11 @@ firefox-deploy:
     #!/usr/bin/env bash
     profile=$(find ~/.mozilla/firefox -maxdepth 1 -name "*.default-release" -type d 2>/dev/null | head -1)
     if [ -z "$profile" ]; then
-        if [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]; then
-            echo "firefox-deploy: no profile yet AND no graphical session — skipping."
-            echo "  Re-run from inside Hyprland: 'just firefox-profile-init && just firefox-deploy'"
-            exit 0
-        fi
-        echo "no firefox profile found"; exit 1
+        echo "firefox-deploy: no default-release profile found in ~/.mozilla/firefox/."
+        echo "  Launch firefox once interactively (from Hyprland) to seed a profile,"
+        echo "  then re-run: 'just firefox-deploy'."
+        echo "  Skipping for now — bootstrap can continue."
+        exit 0
     fi
     ln -sfn "{{dotfiles}}/firefox/chrome" "$profile/chrome"
     echo "firefox chrome/ linked to $profile/chrome"
@@ -250,38 +249,6 @@ install-claude:
     echo "install-claude: running official installer (curl | bash)"
     curl -fsSL https://claude.ai/install.sh | bash
 
-# Ensure firefox has a default-release profile by launching it briefly headless
-firefox-profile-init:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    if compgen -G "$HOME/.mozilla/firefox/*.default-release" > /dev/null 2>&1; then
-        echo "firefox-profile-init: profile already exists, skipping"
-        exit 0
-    fi
-    if [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ]; then
-        echo "firefox-profile-init: no graphical session (DISPLAY/WAYLAND_DISPLAY unset)."
-        echo "  firefox --headless still needs DRM + session bus; skipping for now."
-        echo "  Re-run from inside Hyprland: 'just firefox-profile-init && just firefox-deploy'"
-        exit 0
-    fi
-    if ! command -v firefox > /dev/null; then
-        echo "ERROR: firefox-profile-init: firefox not installed." >&2
-        echo "  This recipe runs only via the production/all deploy path," >&2
-        echo "  which should have installed firefox via install-deps." >&2
-        exit 1
-    fi
-    echo "firefox-profile-init: launching firefox --headless briefly to create profile"
-    firefox --headless &
-    pid=$!
-    for _ in $(seq 1 30); do
-        compgen -G "$HOME/.mozilla/firefox/*.default-release" >/dev/null 2>&1 && break
-        sleep 1
-    done
-    kill "$pid" 2>/dev/null || true
-    wait "$pid" 2>/dev/null || true
-    compgen -G "$HOME/.mozilla/firefox/*.default-release" >/dev/null 2>&1 \
-        || { echo "ERROR: firefox-profile-init: profile not created after 30s" >&2; exit 1; }
-
 # Full deploy for the given type
 deploy type="base": (_preflight type)
     #!/usr/bin/env bash
@@ -292,7 +259,6 @@ deploy type="base": (_preflight type)
         production|all)
             just install-claude
             just claude-deploy
-            just firefox-profile-init
             just firefox-deploy
             ;;
     esac
@@ -306,3 +272,4 @@ bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo '  3. Log out and back in once for GTK theme to fully apply'
     @echo '  4. Open a new shell so .zshrc loads (dots alias becomes available)'
     @echo '  5. sudo systemctl enable --now udisks2     # enable removable-media automount for udiskie'
+    @echo '  6. (production|all only) launch firefox once from Hyprland, then `just firefox-deploy` to install userChrome'
