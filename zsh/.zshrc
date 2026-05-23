@@ -144,8 +144,10 @@ alias news="arch-update -n"
 # Pyenv setup
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - zsh)"
-eval "$(pyenv virtualenv-init -)"
+if command -v pyenv >/dev/null 2>&1; then
+    eval "$(pyenv init - zsh)"
+    eval "$(pyenv virtualenv-init -)"
+fi
 
 # Nvm
 # export NVM_DIR="$HOME/.nvm"
@@ -158,11 +160,11 @@ export MANPAGER="less -R --use-color -Dd+r -Du+b"
 
 # Fix profile sourcing
 # Fix for unreliable profile sourcing, eg. switching to a second TTY
-if [[ -z "$PROFILE_SOURCED" ]]; then
+if [[ -z "$PROFILE_SOURCED" && -f ~/.zprofile ]]; then
     source ~/.zprofile
 fi
 
 # starship
 eval "$(starship init zsh)"
 
-source /usr/share/nvm/init-nvm.sh
+[[ -f /usr/share/nvm/init-nvm.sh ]] && source /usr/share/nvm/init-nvm.sh
