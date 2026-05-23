@@ -2,16 +2,13 @@
 
 ## nvim
 
+The dotfiles' `.zshrc` and `.zprofile` already source pyenv if it's on
+PATH (guarded by `command -v pyenv`), so just install pyenv plus the
+support tools nvim needs, then re-source your shell:
+
 ```zsh
-yay -Suy wget pyenv pyenv-virtualenv npm ripgrep fd-find fzf python-pip
+yay -S --needed wget pyenv pyenv-virtualenv npm ripgrep fd fzf python-pip
 npm install -g tree-sitter-cli
-echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
-echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
-echo 'eval "$(pyenv init - zsh)"' >> ~/.zshrc
-echo 'eval "$(pyenv virtualenv-init -)" >> ~/.zshrc
-echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zprofile
-echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zprofile
-echo 'eval "$(pyenv init - zsh)"' >> ~/.zprofile
 exec "$SHELL"
 pyenv virtualenv neovim
 ```
