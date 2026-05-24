@@ -39,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /home/anotherjson/.claude/hooks/block-sensitive-files.sh"
+            "command": "bash $HOME/.claude/hooks/block-sensitive-files.sh"
           }
         ]
       }
@@ -49,7 +49,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "bash /home/anotherjson/.claude/statusline-command.sh"
+    "command": "bash $HOME/.claude/statusline-command.sh"
   },
   "theme": "dark-ansi",
   "editorMode": "vim",

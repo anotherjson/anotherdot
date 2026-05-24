@@ -21,7 +21,7 @@ config.background = {
 	-- This is the deepest/back-most layer. It will be rendered first
 	{
 		source = {
-			File = "/home/anotherjson/Documents/backgrounds/V-Origami-en.jpg",
+			File = wezterm.home_dir .. "/.config/backgrounds/V-Origami-en.jpg",
 		},
 		opacity = 1.0,
 		hsb = dimmer,

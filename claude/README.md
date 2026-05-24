@@ -52,7 +52,7 @@ trigger description; body is the instruction set. Invoked as
   "PreToolUse": [
     {
       "matcher": "Write|Edit",
-      "hooks": [{ "type": "command", "command": "bash /home/anotherjson/.claude/hooks/<script>.sh" }]
+      "hooks": [{ "type": "command", "command": "bash $HOME/.claude/hooks/<script>.sh" }]
     }
   ]
 }
