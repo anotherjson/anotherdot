@@ -49,4 +49,4 @@ opt.updatetime = 50
 
 opt.colorcolumn = "88"
 
-g.python3_host_prog = "/home/anotherjson/.pyenv/versions/neovim/bin/python"
+g.python3_host_prog = vim.fn.expand("~/.pyenv/versions/neovim/bin/python")
