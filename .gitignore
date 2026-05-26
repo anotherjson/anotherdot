@@ -273,6 +273,7 @@ tags
 [Ss]cripts
 !hypr/.config/hypr/scripts/
 !waybar/.config/waybar/scripts/
+!wireplumber/.local/share/wireplumber/scripts/
 pyvenv.cfg
 pip-selfcheck.json
 
