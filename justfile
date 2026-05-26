@@ -227,7 +227,7 @@ host-init:
 stow-bundle type="base":
     #!/usr/bin/env bash
     set -euo pipefail
-    base="hypr waybar wofi kitty wezterm nvim zsh starship gtk udiskie backgrounds easyeffects"
+    base="hypr waybar wofi kitty wezterm nvim zsh starship gtk udiskie backgrounds easyeffects wireplumber"
     case "{{type}}" in
         base|gaming)    pkgs="$base";;
         production|all) pkgs="$base gemini opencode";;
