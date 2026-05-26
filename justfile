@@ -119,6 +119,7 @@ restow package:
 _pkgs_base := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
               "waybar wofi swaync " + \
               "pipewire wireplumber pavucontrol libnotify " + \
+              "easyeffects lsp-plugins-lv2 " + \
               "kitty wezterm-git neovim zsh starship " + \
               "brightnessctl playerctl hyprshot " + \
               "eza jq curl arch-update " + \
@@ -226,7 +227,7 @@ host-init:
 stow-bundle type="base":
     #!/usr/bin/env bash
     set -euo pipefail
-    base="hypr waybar wofi kitty wezterm nvim zsh starship gtk udiskie backgrounds"
+    base="hypr waybar wofi kitty wezterm nvim zsh starship gtk udiskie backgrounds easyeffects"
     case "{{type}}" in
         base|gaming)    pkgs="$base";;
         production|all) pkgs="$base gemini opencode";;
