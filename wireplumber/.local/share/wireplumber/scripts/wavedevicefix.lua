@@ -11,6 +11,9 @@
 --     Lua environment); functions forward-declared for mutual references
 --   * failed null-sink link now resets nullSinkLink so it can be retried
 --     (upstream set a stray global `node` instead, wedging the retry guard)
+--   * failed null-sink *node* creation clears nullSinkForWaveDeviceSource rather
+--     than a stray local, so no dead proxy is left wedged there (there is no
+--     retry path — the device is just left unmanaged on that rare failure)
 --   * onPortAdded is a local function, not a redefined global
 --   * the port ObjectManager is module-scoped and dropped on device removal,
 --     and a re-entrancy guard ignores duplicate source-added events, so
@@ -118,7 +121,11 @@ function createLinkForWaveDeviceSource(waveDeviceSourceNode)
         Constraint { "port.direction", "equals", "in" }
     }
 
-    -- reuse a single ObjectManager instead of stacking a new one per source-added
+    -- reuse a single ObjectManager instead of stacking a new one per source-added.
+    -- It intentionally tracks all ports (the link needs ports from two distinct
+    -- nodes, so a single Interest constraint can't scope it), and onPortAdded stays
+    -- connected for the session — the `if not nullSinkLink` guard below makes every
+    -- post-bind invocation a cheap no-op, so there's nothing to gain by disconnecting.
     if not portOm then
         portOm = ObjectManager {
             Interest {
@@ -279,7 +286,12 @@ function createNullSink()
         if err then
             log:warning("Failed to create " .. properties["node.name"]
                 .. ": " .. tostring(err))
-            node = nil
+            -- Clear the *global*, not just the local `node`: createNullSink's
+            -- return value is assigned to nullSinkForWaveDeviceSource at the call
+            -- site, so nilling only the local would leave a dead proxy wedged
+            -- there. There is no retry path — on this rare activation failure the
+            -- device is simply left unmanaged.
+            nullSinkForWaveDeviceSource = nil
         else
             log:notice("Created null sink for " .. CONFIG_WAVE_DEVICE_DISPLAY_NAME .. " source. object.id: " ..
                 n.properties["object.id"])
