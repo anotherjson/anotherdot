@@ -32,6 +32,10 @@
       "Bash(wget * | bash)"
     ]
   },
+  "skillOverrides": {
+    "uv-init": "off",
+    "worktree": "off"
+  },
   "hooks": {
     "PreToolUse": [
       {
@@ -43,15 +47,16 @@
           }
         ]
       }
-    ],
-    "Notification": [],
-    "Stop": []
+    ]
   },
   "statusLine": {
     "type": "command",
     "command": "bash $HOME/.claude/statusline-command.sh"
   },
+  "effortLevel": "xhigh",
   "theme": "dark-ansi",
   "editorMode": "vim",
-  "mcpServers": {}
+  "skipAutoPermissionPrompt": true,
+  "mcpServers": {},
+  "skipWorkflowUsageWarning": true
 }
