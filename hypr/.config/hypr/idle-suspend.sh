@@ -1,30 +1,13 @@
 #!/usr/bin/env bash
-# Suspend guard for hypridle's 30min listener.
+# hypridle on-timeout handler: suspend unless an ssh session is active.
 #
-# hypridle measures idleness from Wayland input events only: keyboard and
-# mouse. Work arriving over SSH does not reset that timer, so calling
-# `systemctl suspend-then-hibernate` directly from on-timeout drops remote
-# sessions mid-work — and, because suspend-then-hibernate escalates to
-# hibernate after ~2h, leaves the host off the network until someone walks
-# over to it.
+# hypridle counts only Wayland input as activity, so ssh work never resets its
+# timer. Deferral is bounded: suspends immediately with no ssh, after
+# IDLE_GRACE_SECONDS of remote quiet, or at MAX_DEFER_SECONDS regardless.
+# Returning to the desk cancels it, detected via hyprlock exiting.
 #
-# This defers suspend while an SSH session is doing something, but the
-# deferral is always bounded. Suspend still happens if:
-#   - no SSH session is established               -> immediately, as before
-#   - every remote session goes quiet             -> after IDLE_GRACE_SECONDS
-#   - a session stays busy indefinitely           -> after MAX_DEFER_SECONDS
-# A forgotten session left open on the laptop therefore costs at most
-# IDLE_GRACE_SECONDS of extra uptime, not a whole night.
-#
-# The one case that cancels suspend outright is the user physically coming
-# back, detected via hyprlock exiting (the 10min listener locks the session
-# long before this 30min one fires). hypridle re-arms after that, so the next
-# idle period re-evaluates from scratch.
-#
-# Remote activity is read from the atime/mtime of each remote session's tty,
-# which covers both typed input and command output. A no-tty transfer
-# (rsync/scp/port-forward) shows no tty activity, so it is protected only up
-# to IDLE_GRACE_SECONDS.
+# Remote activity = atime/mtime of each remote tty, so input and output both
+# count. No-tty transfers (rsync/scp) only get IDLE_GRACE_SECONDS.
 
 set -uo pipefail
 
@@ -56,8 +39,7 @@ remote_ttys() {
     done < <(loginctl list-sessions --no-legend 2>/dev/null)
 }
 
-# Seconds since the most recently active remote tty. Fails if none has a tty,
-# which is the caller's cue that there is no activity signal to go on.
+# Seconds since the most recently active remote tty; returns 1 if none has a tty.
 seconds_since_remote_activity() {
     local now newest="" t stamps latest
     printf -v now '%(%s)T' -1
@@ -78,8 +60,7 @@ suspend_now() {
     exec systemctl suspend-then-hibernate
 }
 
-# Serialize: hypridle fires on-timeout once per idle period, but a deferral
-# loop from a previous period could still be alive.
+# A defer loop from a previous idle period may still be running.
 exec 9>"$LOCKFILE" || exit 0
 if ! flock -n 9; then
     log "another instance is already deferring suspend, exiting"
@@ -90,9 +71,7 @@ if ! ssh_active; then
     suspend_now "no active ssh sessions"
 fi
 
-# An SSH session exists, so defer — but only within the bounds above.
-# Whether hyprlock was up at entry decides if we can detect the user's return;
-# if it was not, we simply lose that abort signal and the bounds still apply.
+# Without hyprlock at entry we lose the user-return signal; bounds still apply.
 was_locked=false
 session_locked && was_locked=true
 $was_locked || log "session not locked at entry; cannot detect user return, bounds still apply"
