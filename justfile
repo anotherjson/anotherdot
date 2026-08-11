@@ -25,7 +25,7 @@ claude-pull:
     @test -f "{{claude_live}}/settings.local.json" && cp "{{claude_live}}/settings.local.json" "{{claude_repo}}/settings.local.json" || true
     @cp "{{claude_live}}/statusline-command.sh" "{{claude_repo}}/statusline-command.sh"
     @cp "{{claude_live}}/starship.toml" "{{claude_repo}}/starship.toml"
-    @find "{{claude_live}}/agents" -maxdepth 1 -name '*.md' -exec cp {} "{{claude_repo}}/agents/" \; 2>/dev/null
+    @test -d "{{claude_live}}/agents" && cp "{{claude_live}}"/agents/*.md "{{claude_repo}}/agents/" || true
     @test -d "{{claude_live}}/hooks" && cp "{{claude_live}}"/hooks/*.sh "{{claude_repo}}/hooks/" || true
     @test -d "{{claude_live}}/skills" && cp -r "{{claude_live}}"/skills/* "{{claude_repo}}/skills/" || true
     @echo "claude config pulled into repo"
