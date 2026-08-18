@@ -298,6 +298,27 @@ enable-tty-autologin:
     sudo systemctl daemon-reload
     echo "enable-tty-autologin: wrote $override_file"
 
+# ── System-level reconciliation ──────────────────────────────────
+#
+# `deploy` is user-level throughout — stow, symlinks, file copies — and never
+# needs root, so keeping it prompt-free matters. The steps below do need root,
+# which is why they are not folded into it. Without a home of their own they
+# were reachable only from `bootstrap`, so an already-provisioned host could
+# pull a change to them and never apply it: that is how sshd hosts ended up
+# without ClientAliveInterval long after it was committed.
+#
+# `bootstrap` calls this too, so a fresh machine needs no second command.
+# Every step must stay idempotent and safe to re-run.
+
+# Re-apply system-level config that `deploy` leaves alone (needs sudo)
+sync-system:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo 'Priming sudo cache (you may be prompted once)...'
+    sudo -v
+    just harden-sshd
+    echo 'sync-system: done'
+
 # Drop in `sshd_config.d/99-dotfiles-hardening.conf` to disable password
 # auth and root password login. Skipped if sshd is neither enabled nor
 # active (no point hardening a service that isn't running). Uses a
@@ -350,7 +371,7 @@ bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo 'Enabling udisks2 (system service that udiskie listens to for automount)...'
     @sudo systemctl enable --now udisks2
     @just enable-tty-autologin
-    @just harden-sshd
+    @just sync-system
     @echo ''
     @echo 'Bootstrap complete.'
     @echo ''
@@ -363,3 +384,6 @@ bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo 'Manual steps remaining:'
     @echo '  1. Restart your session (log out + back in, or reboot) to apply all configs'
     @echo '  2. (production|all only) launch firefox once from Hyprland, then `just firefox-deploy` to install userChrome'
+    @echo ''
+    @echo 'Ongoing: `just deploy` covers user config. After pulling changes that'
+    @echo 'touch system config, also run `just sync-system` (needs sudo).'
