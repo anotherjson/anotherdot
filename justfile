@@ -319,10 +319,11 @@ sync-system:
     just harden-sshd
     echo 'sync-system: done'
 
-# Drop in `sshd_config.d/99-dotfiles-hardening.conf` to disable password
-# auth and root password login. Skipped if sshd is neither enabled nor
-# active (no point hardening a service that isn't running). Uses a
-# drop-in so pacman updates to /etc/ssh/sshd_config don't clobber it.
+# Skipped if sshd is neither enabled nor active (no point hardening a service
+# that isn't running). Uses a drop-in so pacman updates to /etc/ssh/sshd_config
+# don't clobber it.
+
+# Disable password auth and root password login via an sshd drop-in
 harden-sshd:
     #!/usr/bin/env bash
     set -euo pipefail
