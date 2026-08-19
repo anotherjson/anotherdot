@@ -20,15 +20,29 @@ claude-deploy:
 
 # Copy ~/.claude/ configs → repo
 claude-pull:
-    @cp "{{claude_live}}/CLAUDE.md" "{{claude_repo}}/CLAUDE.md"
-    @cp "{{claude_live}}/settings.json" "{{claude_repo}}/settings.json"
-    @test -f "{{claude_live}}/settings.local.json" && cp "{{claude_live}}/settings.local.json" "{{claude_repo}}/settings.local.json" || true
-    @cp "{{claude_live}}/statusline-command.sh" "{{claude_repo}}/statusline-command.sh"
-    @cp "{{claude_live}}/starship.toml" "{{claude_repo}}/starship.toml"
-    @cp "{{claude_live}}"/agents/*.md "{{claude_repo}}/agents/"
-    @test -d "{{claude_live}}/hooks" && cp "{{claude_live}}"/hooks/*.sh "{{claude_repo}}/hooks/" || true
-    @test -d "{{claude_live}}/skills" && cp -r "{{claude_live}}"/skills/* "{{claude_repo}}/skills/" || true
-    @echo "claude config pulled into repo"
+    #!/usr/bin/env bash
+    # One shell body with `set -e`, like claude-status: the previous
+    # `test -d ... || true` one-liners swallowed every real cp failure
+    # (unexpanded glob, permission denied, disk full) and still printed success.
+    set -euo pipefail
+    # An existing-but-empty dir now yields an empty list instead of an
+    # unexpanded glob, so "nothing to copy" stays distinct from "copy failed".
+    shopt -s nullglob
+    cp "{{claude_live}}/CLAUDE.md" "{{claude_repo}}/CLAUDE.md"
+    cp "{{claude_live}}/settings.json" "{{claude_repo}}/settings.json"
+    cp "{{claude_live}}/statusline-command.sh" "{{claude_repo}}/statusline-command.sh"
+    cp "{{claude_live}}/starship.toml" "{{claude_repo}}/starship.toml"
+    # Genuinely optional; absence is fine, a failed copy is not.
+    if [ -f "{{claude_live}}/settings.local.json" ]; then
+        cp "{{claude_live}}/settings.local.json" "{{claude_repo}}/settings.local.json"
+    fi
+    agents=("{{claude_live}}"/agents/*.md)
+    if ((${#agents[@]})); then cp "${agents[@]}" "{{claude_repo}}/agents/"; fi
+    hooks=("{{claude_live}}"/hooks/*.sh)
+    if ((${#hooks[@]})); then cp "${hooks[@]}" "{{claude_repo}}/hooks/"; fi
+    skills=("{{claude_live}}"/skills/*)
+    if ((${#skills[@]})); then cp -r "${skills[@]}" "{{claude_repo}}/skills/"; fi
+    echo "claude config pulled into repo"
 
 # Show full diff between repo and live configs
 claude-diff:
@@ -298,10 +312,36 @@ enable-tty-autologin:
     sudo systemctl daemon-reload
     echo "enable-tty-autologin: wrote $override_file"
 
-# Drop in `sshd_config.d/99-dotfiles-hardening.conf` to disable password
-# auth and root password login. Skipped if sshd is neither enabled nor
-# active (no point hardening a service that isn't running). Uses a
-# drop-in so pacman updates to /etc/ssh/sshd_config don't clobber it.
+# ── System-level reconciliation ──────────────────────────────────
+#
+# `deploy` is user-level throughout — stow, symlinks, file copies — and never
+# needs root, so keeping it prompt-free matters. The steps below do need root,
+# which is why they are not folded into it. Without a home of their own they
+# were reachable only from `bootstrap`, so an already-provisioned host could
+# pull a change to them and never apply it: that is how sshd hosts ended up
+# without ClientAliveInterval long after it was committed.
+#
+# `bootstrap` calls this too, so a fresh machine needs no second command.
+# Every step must stay idempotent and safe to re-run.
+
+# Re-apply system-level config that `deploy` leaves alone (needs sudo)
+sync-system:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo 'Priming sudo cache (you may be prompted once)...'
+    sudo -v
+    just harden-sshd
+    echo 'sync-system: done'
+
+# Skipped if sshd is neither enabled nor active (no point hardening a service
+# that isn't running). Uses a drop-in so pacman updates to /etc/ssh/sshd_config
+# don't clobber it.
+#
+# The 10- prefix is load-bearing: sshd takes the FIRST value obtained for each
+# keyword, so a 99- drop-in loses to Arch's own 99-archlinux.conf ('a' < 'd').
+# Sorting early is what makes these directives actually take effect.
+
+# Disable password auth and root password login via an sshd drop-in
 harden-sshd:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -310,25 +350,47 @@ harden-sshd:
         echo "harden-sshd: sshd not enabled or active, skipping."
         exit 0
     fi
-    drop=/etc/ssh/sshd_config.d/99-dotfiles-hardening.conf
+    drop=/etc/ssh/sshd_config.d/10-dotfiles-hardening.conf
+    legacy=/etc/ssh/sshd_config.d/99-dotfiles-hardening.conf
     sudo mkdir -p /etc/ssh/sshd_config.d
-    tmp=$(sudo mktemp --suffix=.conf /etc/ssh/sshd_config.d/99-dotfiles-hardening.XXXXXX)
+    # The tempfile must live in the include dir with a .conf suffix so `sshd -t`
+    # validates it in context; the trap keeps an interrupt from leaving a stray
+    # live drop-in behind.
+    tmp=$(sudo mktemp --suffix=.conf /etc/ssh/sshd_config.d/10-dotfiles-hardening.XXXXXX)
+    trap 'sudo rm -f "$tmp"' EXIT
     sudo tee "$tmp" > /dev/null <<EOF
     # Managed by anotherdot dotfiles (justfile harden-sshd recipe).
     PasswordAuthentication no
+    PubkeyAuthentication yes
     PermitRootLogin prohibit-password
+    # Probe idle clients so dropped links (suspend, carrier loss) are reaped
+    # instead of lingering as half-open sessions. 60s x 3 = ~3min to detect.
+    # Also bounds how long a dead session defers idle suspend, since
+    # hypr/scripts/ssh-idle-guard.sh keys off logind sessions.
+    ClientAliveInterval 60
+    ClientAliveCountMax 3
     EOF
     if ! sudo sshd -t; then
         echo "harden-sshd: sshd -t failed; rolling back tempfile." >&2
-        sudo rm -f "$tmp"
         exit 1
     fi
     sudo mv "$tmp" "$drop"
-    sudo systemctl reload sshd 2>/dev/null || {
-        echo "harden-sshd: reload failed, restarting sshd — active ssh sessions may drop" >&2
-        sudo systemctl restart sshd
-    }
-    echo "harden-sshd: wrote $drop, sshd reloaded"
+    sudo rm -f "$legacy"
+    # `reload` fails on an inactive unit, and the old `|| restart` fallback then
+    # STARTED an sshd the operator had deliberately stopped — which sync-system
+    # now makes a routine occurrence. Only reload when it is already running.
+    if ! systemctl is-active sshd >/dev/null 2>&1; then
+        echo "harden-sshd: wrote $drop; sshd not running, applies on next start."
+        exit 0
+    fi
+    sudo systemctl reload sshd
+    # `sshd -t` only checks syntax — it passes even when the drop-in is entirely
+    # shadowed by one that sorts earlier. Assert the effective value instead.
+    if ! sudo sshd -T | grep -qi '^passwordauthentication no'; then
+        echo "harden-sshd: $drop is in place but PasswordAuthentication is not 'no'; check for a drop-in sorting before it." >&2
+        exit 1
+    fi
+    echo "harden-sshd: wrote $drop, sshd reloaded, PasswordAuthentication no confirmed"
 
 # First-time setup. Runs preflight → install-deps → deploy, then
 # system-level activation: chsh to zsh, enable udisks2, configure TTY1
@@ -345,7 +407,7 @@ bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo 'Enabling udisks2 (system service that udiskie listens to for automount)...'
     @sudo systemctl enable --now udisks2
     @just enable-tty-autologin
-    @just harden-sshd
+    @just sync-system
     @echo ''
     @echo 'Bootstrap complete.'
     @echo ''
@@ -358,3 +420,6 @@ bootstrap type="base": (_preflight type) (install-deps type) (deploy type)
     @echo 'Manual steps remaining:'
     @echo '  1. Restart your session (log out + back in, or reboot) to apply all configs'
     @echo '  2. (production|all only) launch firefox once from Hyprland, then `just firefox-deploy` to install userChrome'
+    @echo ''
+    @echo 'Ongoing: `just deploy` covers user config. After pulling changes that'
+    @echo 'touch system config, also run `just sync-system` (needs sudo).'
