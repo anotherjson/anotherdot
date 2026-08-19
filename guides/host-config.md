@@ -62,11 +62,69 @@ bootstrap wires up a single-auth boot flow via three coordinated pieces:
    desktop boots straight into a locked screen — hyprlock becomes the
    single auth gate.
 
-`just harden-sshd` (also run by `bootstrap` when sshd is active or enabled)
-drops `99-dotfiles-hardening.conf` into `/etc/ssh/sshd_config.d/` to
-disable `PasswordAuthentication` and root-password login. The drop-in is
-written to a tempfile, validated with `sshd -t`, then `mv`'d into place,
-so a broken config never lands.
+## System-level config
+
+`deploy` is user-level only and never needs root. Anything requiring sudo
+lives in `just sync-system`, which `bootstrap` also calls. **After pulling
+changes that touch system config, run `just sync-system`** — otherwise an
+already-provisioned host never picks them up.
+
+Today `sync-system` runs `harden-sshd`, which drops
+`10-dotfiles-hardening.conf` into `/etc/ssh/sshd_config.d/`:
+
+| Directive | Value | Why |
+| --- | --- | --- |
+| `PasswordAuthentication` | `no` | keys only |
+| `PubkeyAuthentication` | `yes` | explicit, not inherited |
+| `PermitRootLogin` | `prohibit-password` | no root password login |
+| `ClientAliveInterval` | `60` | probe idle clients |
+| `ClientAliveCountMax` | `3` | reap a dead link after ~3min |
+
+The **`10-` prefix matters**. sshd takes the *first* value it obtains for
+each keyword, so a drop-in sorting later loses — a `99-` file was shadowed
+by Arch's own `99-archlinux.conf`. Sorting early is what makes these
+directives take effect. The recipe writes to a tempfile in the include
+directory (so `sshd -t` validates it in context), `mv`s it into place, then
+asserts the *effective* value with `sshd -T`, because `sshd -t` only checks
+syntax and passes happily on a fully shadowed drop-in. It reloads sshd only
+when it is already running, so a sync never starts a daemon you stopped.
+
+## Idle suspend with ssh sessions
+
+hypridle counts only Wayland input as activity, so ssh work never resets its
+idle timer and a remote session would be suspended out from under you. Two
+listeners in `hypr/.config/hypr/hypridle.conf` handle this:
+
+- **30 min** — `systemctl suspend-then-hibernate`, gated by a hypridle
+  `condition_cmd`. `hypr/.config/hypr/scripts/ssh-idle-guard.sh` exits 1
+  while any logind session has `Remote=yes`, which defers the suspend;
+  hypridle re-runs it every 60 s and drops the pending retry by itself the
+  moment real input arrives.
+- **2.5 h** — an unconditioned hard ceiling. A permanently-connected `-N`
+  tunnel or VS Code Remote-SSH would otherwise defer forever.
+
+So a connected ssh session holds the machine awake until it disconnects or
+the ceiling hits. There is no "quiet session" grace: an idle-but-connected
+shell rides to the ceiling.
+
+`ClientAliveInterval`/`ClientAliveCountMax` above are **load-bearing here** —
+they bound how long a dead session keeps the box awake, since the guard keys
+off logind sessions and those persist until sshd reaps them.
+
+The guard is fail-safe: if it is missing, non-executable, or broken it exits
+0 and the suspend proceeds, because never being able to suspend is the worse
+failure. That means **a lost executable bit silently disables the feature** —
+`ssh-idle-guard.sh` must stay mode `0755`.
+
+To watch it work:
+
+```
+journalctl -t hypridle -t ssh-idle-guard -f
+```
+
+`$idle` in `hyprland.conf` runs hypridle under `systemd-cat` for exactly this
+reason; Hyprland otherwise sends `exec-once` children's output to `/dev/null`,
+which would hide both the retry messages and any config parse error.
 
 ## Per-host autodetect
 
