@@ -20,15 +20,29 @@ claude-deploy:
 
 # Copy ~/.claude/ configs → repo
 claude-pull:
-    @cp "{{claude_live}}/CLAUDE.md" "{{claude_repo}}/CLAUDE.md"
-    @cp "{{claude_live}}/settings.json" "{{claude_repo}}/settings.json"
-    @test -f "{{claude_live}}/settings.local.json" && cp "{{claude_live}}/settings.local.json" "{{claude_repo}}/settings.local.json" || true
-    @cp "{{claude_live}}/statusline-command.sh" "{{claude_repo}}/statusline-command.sh"
-    @cp "{{claude_live}}/starship.toml" "{{claude_repo}}/starship.toml"
-    @test -d "{{claude_live}}/agents" && cp "{{claude_live}}"/agents/*.md "{{claude_repo}}/agents/" || true
-    @test -d "{{claude_live}}/hooks" && cp "{{claude_live}}"/hooks/*.sh "{{claude_repo}}/hooks/" || true
-    @test -d "{{claude_live}}/skills" && cp -r "{{claude_live}}"/skills/* "{{claude_repo}}/skills/" || true
-    @echo "claude config pulled into repo"
+    #!/usr/bin/env bash
+    # One shell body with `set -e`, like claude-status: the previous
+    # `test -d ... || true` one-liners swallowed every real cp failure
+    # (unexpanded glob, permission denied, disk full) and still printed success.
+    set -euo pipefail
+    # An existing-but-empty dir now yields an empty list instead of an
+    # unexpanded glob, so "nothing to copy" stays distinct from "copy failed".
+    shopt -s nullglob
+    cp "{{claude_live}}/CLAUDE.md" "{{claude_repo}}/CLAUDE.md"
+    cp "{{claude_live}}/settings.json" "{{claude_repo}}/settings.json"
+    cp "{{claude_live}}/statusline-command.sh" "{{claude_repo}}/statusline-command.sh"
+    cp "{{claude_live}}/starship.toml" "{{claude_repo}}/starship.toml"
+    # Genuinely optional; absence is fine, a failed copy is not.
+    if [ -f "{{claude_live}}/settings.local.json" ]; then
+        cp "{{claude_live}}/settings.local.json" "{{claude_repo}}/settings.local.json"
+    fi
+    agents=("{{claude_live}}"/agents/*.md)
+    if ((${#agents[@]})); then cp "${agents[@]}" "{{claude_repo}}/agents/"; fi
+    hooks=("{{claude_live}}"/hooks/*.sh)
+    if ((${#hooks[@]})); then cp "${hooks[@]}" "{{claude_repo}}/hooks/"; fi
+    skills=("{{claude_live}}"/skills/*)
+    if ((${#skills[@]})); then cp -r "${skills[@]}" "{{claude_repo}}/skills/"; fi
+    echo "claude config pulled into repo"
 
 # Show full diff between repo and live configs
 claude-diff:
@@ -322,6 +336,10 @@ sync-system:
 # Skipped if sshd is neither enabled nor active (no point hardening a service
 # that isn't running). Uses a drop-in so pacman updates to /etc/ssh/sshd_config
 # don't clobber it.
+#
+# The 10- prefix is load-bearing: sshd takes the FIRST value obtained for each
+# keyword, so a 99- drop-in loses to Arch's own 99-archlinux.conf ('a' < 'd').
+# Sorting early is what makes these directives actually take effect.
 
 # Disable password auth and root password login via an sshd drop-in
 harden-sshd:
@@ -332,9 +350,14 @@ harden-sshd:
         echo "harden-sshd: sshd not enabled or active, skipping."
         exit 0
     fi
-    drop=/etc/ssh/sshd_config.d/99-dotfiles-hardening.conf
+    drop=/etc/ssh/sshd_config.d/10-dotfiles-hardening.conf
+    legacy=/etc/ssh/sshd_config.d/99-dotfiles-hardening.conf
     sudo mkdir -p /etc/ssh/sshd_config.d
-    tmp=$(sudo mktemp --suffix=.conf /etc/ssh/sshd_config.d/99-dotfiles-hardening.XXXXXX)
+    # The tempfile must live in the include dir with a .conf suffix so `sshd -t`
+    # validates it in context; the trap keeps an interrupt from leaving a stray
+    # live drop-in behind.
+    tmp=$(sudo mktemp --suffix=.conf /etc/ssh/sshd_config.d/10-dotfiles-hardening.XXXXXX)
+    trap 'sudo rm -f "$tmp"' EXIT
     sudo tee "$tmp" > /dev/null <<EOF
     # Managed by anotherdot dotfiles (justfile harden-sshd recipe).
     PasswordAuthentication no
@@ -342,20 +365,32 @@ harden-sshd:
     PermitRootLogin prohibit-password
     # Probe idle clients so dropped links (suspend, carrier loss) are reaped
     # instead of lingering as half-open sessions. 60s x 3 = ~3min to detect.
+    # Also bounds how long a dead session defers idle suspend, since
+    # hypr/scripts/ssh-idle-guard.sh keys off logind sessions.
     ClientAliveInterval 60
     ClientAliveCountMax 3
     EOF
     if ! sudo sshd -t; then
         echo "harden-sshd: sshd -t failed; rolling back tempfile." >&2
-        sudo rm -f "$tmp"
         exit 1
     fi
     sudo mv "$tmp" "$drop"
-    sudo systemctl reload sshd 2>/dev/null || {
-        echo "harden-sshd: reload failed, restarting sshd — active ssh sessions may drop" >&2
-        sudo systemctl restart sshd
-    }
-    echo "harden-sshd: wrote $drop, sshd reloaded"
+    sudo rm -f "$legacy"
+    # `reload` fails on an inactive unit, and the old `|| restart` fallback then
+    # STARTED an sshd the operator had deliberately stopped — which sync-system
+    # now makes a routine occurrence. Only reload when it is already running.
+    if ! systemctl is-active sshd >/dev/null 2>&1; then
+        echo "harden-sshd: wrote $drop; sshd not running, applies on next start."
+        exit 0
+    fi
+    sudo systemctl reload sshd
+    # `sshd -t` only checks syntax — it passes even when the drop-in is entirely
+    # shadowed by one that sorts earlier. Assert the effective value instead.
+    if ! sudo sshd -T | grep -qi '^passwordauthentication no'; then
+        echo "harden-sshd: $drop is in place but PasswordAuthentication is not 'no'; check for a drop-in sorting before it." >&2
+        exit 1
+    fi
+    echo "harden-sshd: wrote $drop, sshd reloaded, PasswordAuthentication no confirmed"
 
 # First-time setup. Runs preflight → install-deps → deploy, then
 # system-level activation: chsh to zsh, enable udisks2, configure TTY1
