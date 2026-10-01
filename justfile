@@ -134,7 +134,7 @@ _pkgs_base := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland 
               "waybar wofi swaync " + \
               "pipewire wireplumber pavucontrol libnotify " + \
               "easyeffects lsp-plugins-lv2 " + \
-              "kitty wezterm-git neovim zsh starship " + \
+              "kitty wezterm neovim zsh starship " + \
               "brightnessctl playerctl hyprshot " + \
               "eza jq curl arch-update " + \
               "adw-gtk-theme ttf-firacode-nerd " + \
