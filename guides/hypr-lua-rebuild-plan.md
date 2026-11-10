@@ -27,7 +27,7 @@ no waybar/hypridle/hyprpaper autostart, no lock bind. Consequences for this plan
 |---|---|---|---|
 | Research & decisions | ✅ Complete | — | Hyprland Lua API, the hyprwm app inventory, bar/notification/automount alternatives, the wiki must-haves, and the system audit (UWSM, polkit, notification daemons, pipewire, Qt, fonts, GNOME leftovers) are all done. Scope settled with the user |
 | 0 Sync with main, publish plan, install packages | 🔄 In progress | `039d1a4` (merge) | origin/main merged 2026-11-09; plan published to `guides/hypr-lua-rebuild-plan.md` (0c); `[user]` 0a installs + 0b removals pending (checked 2026-11-09: none installed yet) |
-| 1 Lua port | ⏳ Pending | — | critical path: the laptop is on the stock config until this lands |
+| 1 Lua port | ✅ Shipped | `10e56bc` | hyprland.lua + lua/{core,extras}; monitors template + host-init; .zlogin `--locked-cmd`; hypridle Lua dispatch; CI asserts; palette fix. Static checks pass on 0.57.2 (both tiers, core-only, monitors absent/present/broken, sandbox stow + CI script) |
 | 2 Hypr apps, packages, fonts (8–15b) | ⏳ Pending | — | All decisions made (cursor: Adwaita) |
 | 3 Docs | ⏳ Pending | — | |
 | 3b PR for review | ⏳ Pending | — | push + `gh pr create`; wait for review |
@@ -35,8 +35,8 @@ no waybar/hypridle/hyprpaper autostart, no lock bind. Consequences for this plan
 | 5 Laptop gdm → autologin + hyprlock | ⏳ Pending | — | `[user]`, after merge and once Lua is stable; test `--locked-cmd` from a TTY first |
 | Follow-ups (GNOME, waybar cleanup) | 🗂 Deferred | — | separate branches |
 
-Not yet done on the branch: no implementation commits yet; only the `origin/main` merge (`039d1a4`) and this plan
-document (0c) are on top of `b39113d` (empty opener).
+On the branch so far: the `origin/main` merge (`039d1a4`), this plan document (`eb50264`), and the Phase 1 Lua port
+(`10e56bc`). Phase 2 is next; the `[user]` package steps 0a/0b are still open.
 
 ## Recovery quick reference (if the laptop misbehaves)
 Read this from another device at `guides/hypr-lua-rebuild-plan.md` on GitHub. Try these in order.
