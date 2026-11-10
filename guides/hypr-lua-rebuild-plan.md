@@ -30,7 +30,7 @@ no waybar/hypridle/hyprpaper autostart, no lock bind. Consequences for this plan
 | 1 Lua port | ✅ Shipped | `8464c90` | hyprland.lua + lua/{core,extras}; monitors template + host-init; .zlogin `--locked-cmd`; hypridle Lua dispatch; CI asserts; palette fix. Static checks pass on 0.57.2 (both tiers, core-only, monitors absent/present/broken, sandbox stow + CI script) |
 | 2 Hypr apps, packages, fonts (8–15b) | ✅ Shipped | `b89e5c8` | hyprlauncher/hyprshutdown/hyprpicker/hyprpwcenter/hyprpolkitagent wired in; wofi, pavucontrol and the sink-cycle script removed; `hyprtoolkit.conf`; Adwaita cursor declared; `fontconfig` package; `_pkgs_base` updated. Static checks + sandbox CI pass. No `hyprlauncher.conf`: it has no font/colour options, the theme comes from hyprtoolkit.conf |
 | 3 Docs | ✅ Shipped | `5f72b3e` | README + guides/host-config.md: boot model via `--locked-cmd`, Lua layout/tiers/autostart, monitors template, waybar-only autodetect |
-| 3b PR for review | 🔄 In review | — | [PR #42](https://github.com/anotherjson/anotherdot/pull/42) (the September draft, rewritten and marked ready). Waiting for review; fixes land as new commits |
+| 3b PR for review | ✅ Reviewed | see next commit | [PR #42](https://github.com/anotherjson/anotherdot/pull/42). `/code-review` (xhigh) returned 9 findings; 8 fixed (reboot/poweroff issued from inside the session, empty-choice guards, `HYPR_TIERS` parsing, host-init refuses a folded `~/.config/hypr`, Super+Shift+Ctrl+M → hyprshutdown, pipewire-pulse dropped as an easyeffects dep, one `config_home` helper, `u.each` in the entry file); 1 kept by decision (sans/serif → FiraCode). Ready for Phase 4 |
 | 4 Test in ~/.dotfiles, then merge | ⏳ Pending | — | `[user]`: detached checkout of the reviewed branch, rollback = stock Lua; laptop stays on gdm |
 | 5 Laptop gdm → autologin + hyprlock | ⏳ Pending | — | `[user]`, after merge and once Lua is stable; test `--locked-cmd` from a TTY first |
 | Follow-ups (GNOME, waybar cleanup) | 🗂 Deferred | — | separate branches |
@@ -252,7 +252,10 @@ own hash can't be in the commit that creates it, so the Status table records eac
      - the `opencode/README.md` L44 mention
 9. `[claude]` **hyprshutdown in the power menu:**
    - Logout = `hyprshutdown`.
-   - Reboot / Shutdown = `hyprshutdown --post-cmd 'systemctl reboot'` / `'systemctl poweroff'`.
+   - Reboot / Shutdown = `hyprshutdown --no-fork --no-exit && systemctl reboot` / `poweroff`: apps close gracefully
+     while the session is still active, then logind takes it down. (`--post-cmd` would run after Hyprland exits,
+     when a gdm session is already closing and polkit's `allow_active` no longer covers systemctl — code review.)
+     Phase 4 checks that a cancelled hyprshutdown dialog exits non-zero so the `&&` holds.
    - Lock and Suspend stay as they are now.
    - This removes the `hyprctl dispatch exit` call.
 10. `[claude]` **Autostart policy:** start everything the desktop needs from `lua/{core,extras}/autostart.lua`, and keep systemd-started
@@ -292,8 +295,8 @@ own hash can't be in the commit that creates it, so the Status table records eac
     - `noto-fonts-emoji`: color emoji fallback (user decision); FiraCode has no emoji.
     - `noto-fonts-cjk`: Chinese/Japanese/Korean fallback (user decision); FiraCode and noto-fonts both lack these (U+4E2D checked).
     - Not adding Font Awesome. FiraCode Nerd Font already includes its icons; U+F015 and U+F1EB were checked with `fc-list`.
-    - `pipewire-pulse`: only pulled in today via gnome-settings-daemon, which comes with nautilus (production-only).
-      Firefox and other PulseAudio-API apps need it, so declare it next to pipewire and wireplumber.
+    - `pipewire-pulse`: **not listed after all** — code review found it is a hard dependency of `easyeffects`, which is
+      already in `_pkgs_base`, so listing it would break the top-level-only rule. It stays installed through easyeffects.
       Verified: `pipewire-media-session` and `pulseaudio` are not installed.
     - The rest of that list is already covered: swaync (autostarted, step 10), pipewire + wireplumber, xdg-desktop-portal-hyprland,
       and polkit via hyprpolkitagent.
@@ -451,7 +454,8 @@ needed here: the `--locked-cmd` `.zlogin` (step 3a) is already merged, and it on
     - Exiting Hyprland drops to `vlock`.
   - **Binds:** every bind works, including Super+S (scratchpad), Super+O (togglesplit), media keys while locked, and laptop brightness.
   - **Autostart:** each autostart process is running (`pgrep` for waybar, swaync, hypridle, hyprpaper, hyprlauncher, udiskie, hyprpolkitagent, easyeffects).
-  - **Power menu:** opens and Cancel exits cleanly. Logout goes through hyprshutdown.
+  - **Power menu:** opens and Cancel exits cleanly. Logout goes through hyprshutdown. Reboot/Shutdown: confirm the
+    hyprshutdown dialog appears first; if it offers a cancel, cancelling must **not** reboot (exit code gates the `&&`).
   - **Eject picker:** opens from the waybar disk icon.
   - **Idle:** `hyprctl dispatch 'hl.dsp.dpms({ action = "disable" })'` turns the screen off. hypridle's dpms on/off fires on idle.
   - **Polkit:** a polkit prompt appears (e.g. `pkexec true`).

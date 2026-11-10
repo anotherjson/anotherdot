@@ -132,7 +132,7 @@ restow package:
 # Package bundles per type. Add new packages here.
 _pkgs_base := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
               "waybar swaync hyprlauncher hyprpolkitagent hyprpicker hyprpwcenter hyprshutdown " + \
-              "pipewire pipewire-pulse wireplumber libnotify wl-clipboard " + \
+              "pipewire wireplumber libnotify wl-clipboard " + \
               "easyeffects lsp-plugins-lv2 " + \
               "kitty wezterm neovim zsh starship " + \
               "brightnessctl playerctl hyprshot " + \
@@ -227,6 +227,13 @@ host-init:
     #!/usr/bin/env bash
     set -euo pipefail
     mkdir -p "{{home}}/.config/hypr" "{{home}}/.config/waybar"
+    # A pre---no-folding stow may have left ~/.config/hypr as one link into the repo; copying the
+    # machine-local file through it would put it inside the package dir. Unfold first.
+    if [ -L "{{home}}/.config/hypr" ]; then
+        echo "ERROR: ~/.config/hypr is a folded stow link into the repo." >&2
+        echo "  Run 'just restow hypr' (uses --no-folding) and then 'just host-init' again." >&2
+        exit 1
+    fi
     # Monitors are machine-local: copy the template once, never overwrite local edits.
     if [ ! -e "{{home}}/.config/hypr/monitors.lua" ]; then
         cp "{{dotfiles}}/hosts/hypr/monitors.lua.template" "{{home}}/.config/hypr/monitors.lua"
