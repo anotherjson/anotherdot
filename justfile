@@ -105,20 +105,20 @@ firefox-deploy:
 stow package:
     #!/usr/bin/env bash
     set -euo pipefail
-    stow -d "{{dotfiles}}" -t "{{home}}" {{package}}
+    stow --no-folding -d "{{dotfiles}}" -t "{{home}}" {{package}}
     case "{{package}}" in
         hypr|waybar) just host-init ;;
     esac
 
 # Unstow a single package
 unstow package:
-    stow -d "{{dotfiles}}" -t "{{home}}" -D {{package}}
+    stow --no-folding -d "{{dotfiles}}" -t "{{home}}" -D {{package}}
 
 # Restow a package: unstow + stow (auto-runs host-init for hypr/waybar)
 restow package:
     #!/usr/bin/env bash
     set -euo pipefail
-    stow -d "{{dotfiles}}" -t "{{home}}" -R {{package}}
+    stow --no-folding -d "{{dotfiles}}" -t "{{home}}" -R {{package}}
     case "{{package}}" in
         hypr|waybar) just host-init ;;
     esac
@@ -221,20 +221,27 @@ install-deps type="base": (_preflight type)
     read -ra pkg_arr <<<"$pkgs"
     yay -S --needed "${pkg_arr[@]}"
 
-# Detect host class (laptop|desktop) and symlink the matching host config variant
+# Seed the machine-local hypr monitor file and link the waybar host variant (laptop|desktop)
 host-init:
     #!/usr/bin/env bash
     set -euo pipefail
     mkdir -p "{{home}}/.config/hypr" "{{home}}/.config/waybar"
+    # Monitors are machine-local: copy the template once, never overwrite local edits.
+    if [ ! -e "{{home}}/.config/hypr/monitors.lua" ]; then
+        cp "{{dotfiles}}/hosts/hypr/monitors.lua.template" "{{home}}/.config/hypr/monitors.lua"
+        echo "host-init: seeded ~/.config/hypr/monitors.lua from hosts/hypr/monitors.lua.template"
+    fi
+    # The pre-Lua host-init linked a hypr host.conf; nothing reads it now, drop a stale link.
+    if [ -L "{{home}}/.config/hypr/host.conf" ]; then
+        rm "{{home}}/.config/hypr/host.conf"
+        echo "host-init: removed stale ~/.config/hypr/host.conf link"
+    fi
     if compgen -G "/sys/class/power_supply/BAT*" > /dev/null 2>&1; then
         profile=laptop
     else
         profile=desktop
     fi
-    echo "host-init: detected profile=$profile"
-    ln -sfn "{{dotfiles}}/hosts/hypr/host.conf.$profile"    "{{home}}/.config/hypr/host.conf"
     ln -sfn "{{dotfiles}}/hosts/waybar/host.jsonc.$profile" "{{home}}/.config/waybar/host.jsonc"
-    echo "host-init: linked ~/.config/hypr/host.conf → host.conf.$profile"
     echo "host-init: linked ~/.config/waybar/host.jsonc → host.jsonc.$profile"
 
 # Stow the stow packages relevant to the type
@@ -249,7 +256,7 @@ stow-bundle type="base":
     esac
     read -ra pkg_arr <<<"$pkgs"
     for p in "${pkg_arr[@]}"; do
-        stow -d "{{dotfiles}}" -t "{{home}}" "$p"
+        stow --no-folding -d "{{dotfiles}}" -t "{{home}}" "$p"
     done
     echo "stowed: $pkgs"
 

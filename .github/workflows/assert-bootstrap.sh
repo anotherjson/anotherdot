@@ -21,8 +21,15 @@ assert_resolves_to() {
 }
 
 # stow-bundle linked the hypr package
-assert_resolves_to "$HOME/.config/hypr/hyprland.conf" \
-    "$dotfiles/hypr/.config/hypr/hyprland.conf"
+assert_resolves_to "$HOME/.config/hypr/hyprland.lua" \
+    "$dotfiles/hypr/.config/hypr/hyprland.lua"
+
+# stow runs with --no-folding, so ~/.config/hypr must be a real directory, and
+# host-init must have seeded monitors.lua as a regular file (copied, not linked)
+[ -d "$HOME/.config/hypr" ] && [ ! -L "$HOME/.config/hypr" ] \
+    || { echo "FAIL: ~/.config/hypr is not a real directory (stow folded it)"; exit 1; }
+[ -f "$HOME/.config/hypr/monitors.lua" ] && [ ! -L "$HOME/.config/hypr/monitors.lua" ] \
+    || { echo "FAIL: ~/.config/hypr/monitors.lua missing or not a regular file"; exit 1; }
 
 # swaync ships inside the hypr package
 assert_resolves_to "$HOME/.config/swaync/config.json" \
@@ -36,9 +43,7 @@ assert_resolves_to "$HOME/.config/kitty/kitty.conf" \
 assert_resolves_to "$HOME/.config/waybar/config.jsonc" \
     "$dotfiles/waybar/.config/waybar/config.jsonc"
 
-# host-init linked the desktop variants (no BAT* in CI container)
-assert_resolves_to "$HOME/.config/hypr/host.conf" \
-    "$dotfiles/hosts/hypr/host.conf.desktop"
+# host-init linked the desktop waybar variant (no BAT* in CI container)
 assert_resolves_to "$HOME/.config/waybar/host.jsonc" \
     "$dotfiles/hosts/waybar/host.jsonc.desktop"
 

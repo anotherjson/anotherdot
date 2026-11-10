@@ -11,6 +11,9 @@
 # If Hyprland exits (crash, manual logout), don't leave an autologged-in
 # shell exposed on TTY1 — lock the VT with vlock; password required to
 # release. Other TTYs stay reachable via Ctrl+Alt+F2..F6 for recovery.
+#
+# Hyprland is started already locked (--locked-cmd hyprlock): autologin
+# skips the TTY password, so hyprlock is the only auth gate at boot.
 if [[ "$(tty)" == "/dev/tty1" ]]; then
     # Per-session re-entry guard: if .zlogin is somehow re-sourced in the
     # same login session (pathological — shouldn't happen normally), drop
@@ -22,9 +25,9 @@ if [[ "$(tty)" == "/dev/tty1" ]]; then
     fi
     export HYPRLAND_LAUNCH_GUARD=1
     if command -v start-hyprland >/dev/null 2>&1; then
-        start-hyprland
+        start-hyprland -- --locked-cmd hyprlock
     elif command -v Hyprland >/dev/null 2>&1; then
-        Hyprland
+        Hyprland --locked-cmd hyprlock
     fi
     if command -v vlock >/dev/null 2>&1; then
         exec vlock

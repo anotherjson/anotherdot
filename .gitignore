@@ -306,3 +306,6 @@ opencode/.config/opencode/package.json
 opencode/.config/opencode/package-lock.json
 opencode/.config/opencode/bun.lock
 opencode/.local/
+
+# Hyprland machine-local config (seeded by `just host-init` from hosts/hypr/monitors.lua.template)
+hypr/.config/hypr/monitors.lua
