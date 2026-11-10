@@ -47,9 +47,9 @@ assert_resolves_to "$HOME/.config/waybar/config.jsonc" \
 assert_resolves_to "$HOME/.config/waybar/host.jsonc" \
     "$dotfiles/hosts/waybar/host.jsonc.desktop"
 
-# wofi package
-assert_resolves_to "$HOME/.config/wofi/style.css" \
-    "$dotfiles/wofi/.config/wofi/style.css"
+# fontconfig package
+assert_resolves_to "$HOME/.config/fontconfig/fonts.conf" \
+    "$dotfiles/fontconfig/.config/fontconfig/fonts.conf"
 
 # gtk package (gtk-3.0 settings.ini, gtk-4.0 gtk.css)
 assert_resolves_to "$HOME/.config/gtk-3.0/settings.ini" \

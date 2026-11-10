@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Wofi picker for per-device eject of udiskie-mounted removable media.
+# hyprlauncher picker for per-device eject of udiskie-mounted removable media.
 set -euo pipefail
 shopt -s nullglob
 mounts=(/run/media/"$USER"/*/)
@@ -9,11 +9,10 @@ items=()
 for m in "${mounts[@]}"; do items+=("$(basename "$m")"); done
 items+=("(eject all)")
 
-choice=$(printf '%s\n' "${items[@]}" | wofi --dmenu --prompt "Eject:" --width 280 --height 240) || exit 0
-[ -n "$choice" ] || exit 0
+choice=$(printf '%s\n' "${items[@]}" | hyprlauncher -m) || exit 0
 
 if [ "$choice" = "(eject all)" ]; then
     udiskie-umount --all
-else
+elif [ -d "/run/media/$USER/$choice" ]; then
     udiskie-umount "/run/media/$USER/$choice"
 fi

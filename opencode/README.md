@@ -41,7 +41,7 @@ Set in `opencode.json`:
 
 Custom Solarized Osaka theme at
 `.config/opencode/themes/solarized-osaka.json`. Palette converged to match
-the rest of the desktop UI (`gtk/`, `waybar/`, `wofi/`, `swaync/`):
+the rest of the desktop UI (`gtk/`, `waybar/`, `swaync/`, `hyprtoolkit.conf`):
 [Solarized Osaka]'s dark teal `#00141A` background plus the **stock
 [Solarized] accent set** (`#268BD2` blue, `#2AA198` cyan, `#859900` green,
 `#B58900` yellow, `#DC322F` red, `#D33682` magenta, `#6C71C4` violet).
