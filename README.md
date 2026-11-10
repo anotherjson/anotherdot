@@ -34,6 +34,8 @@ Each top-level directory is a stow package mirroring its target path inside
 Platform-specific setup quicknotes live in [`guides/`](guides/):
 - [`guides/host-config.md`](guides/host-config.md) — typed bootstrap +
   per-host autodetect
+- [`guides/hypr-lua-rebuild-plan.md`](guides/hypr-lua-rebuild-plan.md) — plan,
+  decisions and recovery steps for the Hyprland 0.57 Lua rebuild
 - [`guides/arch.md`](guides/arch.md) — Arch nvim/pyenv quicknotes
 - [`guides/macbook-air-ubuntu.md`](guides/macbook-air-ubuntu.md) — legacy
   MacBook Air on Ubuntu
