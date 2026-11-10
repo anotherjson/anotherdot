@@ -26,9 +26,9 @@ no waybar/hypridle/hyprpaper autostart, no lock bind. Consequences for this plan
 | Phase | Status | Commit | Outcome |
 |---|---|---|---|
 | Research & decisions | ✅ Complete | — | Hyprland Lua API, the hyprwm app inventory, bar/notification/automount alternatives, the wiki must-haves, and the system audit (UWSM, polkit, notification daemons, pipewire, Qt, fonts, GNOME leftovers) are all done. Scope settled with the user |
-| 0 Sync with main, publish plan, install packages | 🔄 In progress | `039d1a4` (merge) | origin/main merged 2026-11-09; plan published to `guides/hypr-lua-rebuild-plan.md` (0c); `[user]` 0a installs + 0b removals pending (checked 2026-11-09: none installed yet) |
+| 0 Sync with main, publish plan, install packages | ✅ Complete | `039d1a4` (merge), `eb50264` (plan) | origin/main merged; plan published (0c); `[user]` ran 0a + 0b on 2026-11-09 (all 14 packages present, leftovers removed, hyprlang now a dep) |
 | 1 Lua port | ✅ Shipped | `8464c90` | hyprland.lua + lua/{core,extras}; monitors template + host-init; .zlogin `--locked-cmd`; hypridle Lua dispatch; CI asserts; palette fix. Static checks pass on 0.57.2 (both tiers, core-only, monitors absent/present/broken, sandbox stow + CI script) |
-| 2 Hypr apps, packages, fonts (8–15b) | ✅ Shipped (pending 0a checks) | `b89e5c8` | hyprlauncher/hyprshutdown/hyprpicker/hyprpwcenter/hyprpolkitagent wired in; wofi, pavucontrol and the sink-cycle script removed; `hyprtoolkit.conf`; Adwaita cursor declared; `fontconfig` package; `_pkgs_base` updated. Static checks + sandbox CI pass. No `hyprlauncher.conf`: it has no font/colour options, the theme comes from hyprtoolkit.conf |
+| 2 Hypr apps, packages, fonts (8–15b) | ✅ Shipped | `b89e5c8` | hyprlauncher/hyprshutdown/hyprpicker/hyprpwcenter/hyprpolkitagent wired in; wofi, pavucontrol and the sink-cycle script removed; `hyprtoolkit.conf`; Adwaita cursor declared; `fontconfig` package; `_pkgs_base` updated. Static checks + sandbox CI pass. No `hyprlauncher.conf`: it has no font/colour options, the theme comes from hyprtoolkit.conf |
 | 3 Docs | ✅ Shipped | `5f72b3e` | README + guides/host-config.md: boot model via `--locked-cmd`, Lua layout/tiers/autostart, monitors template, waybar-only autodetect |
 | 3b PR for review | 🔄 In review | — | [PR #42](https://github.com/anotherjson/anotherdot/pull/42) (the September draft, rewritten and marked ready). Waiting for review; fixes land as new commits |
 | 4 Test in ~/.dotfiles, then merge | ⏳ Pending | — | `[user]`: detached checkout of the reviewed branch, rollback = stock Lua; laptop stays on gdm |
@@ -37,9 +37,10 @@ no waybar/hypridle/hyprpaper autostart, no lock bind. Consequences for this plan
 
 On the branch so far: the `origin/main` merge (`039d1a4`), this plan document (`eb50264`), and the Phase 1 Lua port
 (`8464c90`), and the Phase 2 app/package/font work (hash recorded by the next commit). The `[user]` package steps
-0a/0b are still open, and two Phase 2 items can only be confirmed once 0a is done: `hyprlauncher -m` cancel behaviour (both picker
-scripts) and the Noto `fc-match` rows. The hyprpolkitagent binary path `/usr/lib/hyprpolkitagent/hyprpolkitagent`
-is confirmed from the package file list.
+0a/0b are still open, Post-0a checks (2026-11-09): shellcheck clean on all changed scripts; `fc-match` rows all correct (CJK → Noto CJK JP,
+emoji → Noto Color Emoji); hyprpolkitagent binary at `/usr/lib/hyprpolkitagent/hyprpolkitagent`; `hyprlauncher --help`
+confirms `-d` and `-m` (dmenu via stdin); `hyprshutdown --post-cmd` confirmed. Still open: what `hyprlauncher -m`
+prints on cancel (interactive, `[user]` step below). CI `bootstrap` job passed on PR #42.
 
 ## Recovery quick reference (if the laptop misbehaves)
 Read this from another device at `guides/hypr-lua-rebuild-plan.md` on GitHub. Try these in order.
