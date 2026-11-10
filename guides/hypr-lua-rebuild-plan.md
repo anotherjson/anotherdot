@@ -63,6 +63,9 @@ Read this from another device at `guides/hypr-lua-rebuild-plan.md` on GitHub. Tr
    `sudo rm /etc/systemd/system/getty@tty1.service.d/autologin.conf`, then reboot. If the screen is stuck on hyprlock,
    Ctrl+Alt+F3 still reaches a console.
 8. **Monitors wrong.** Delete or edit `~/.config/hypr/monitors.lua`; with no file, Hyprland uses its defaults.
+9. **Error overlay "cannot open …/hyprland.lua: No such file" right after a git operation.** `git pull`/`switch` in
+   `~/.dotfiles` rewrites the stowed files (delete + recreate) and Hyprland's autoreload can fire in the gap. The
+   file is fine; run `hyprctl reload` and the overlay clears (seen 2026-11-09 after switching `~/.dotfiles` to main).
 
 ## Decisions (user, 2026-09-30)
 - **Layout:** tiered `lua/core/` + `lua/extras/` loaded by `hyprland.lua` (switch: edit the tiers string or `HYPR_TIERS=core`). **No per-host hypr files**; the only machine-specific hypr file is the local `monitors.lua`.
