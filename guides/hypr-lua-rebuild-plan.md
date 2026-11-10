@@ -22,7 +22,7 @@ no waybar/hypridle/hyprpaper autostart, no lock bind. Consequences for this plan
 4. `--locked-cmd`, `--safe-mode` and `--verify-config` still exist in 0.57.2 (checked `Hyprland --help`), and the
    stubs still expose `hl.config`, `hl.dsp.dpms` etc.
 
-## Status (updated 2026-11-09)
+## Status (updated 2026-11-09, after merge)
 | Phase | Status | Commit | Outcome |
 |---|---|---|---|
 | Research & decisions | ✅ Complete | — | Hyprland Lua API, the hyprwm app inventory, bar/notification/automount alternatives, the wiki must-haves, and the system audit (UWSM, polkit, notification daemons, pipewire, Qt, fonts, GNOME leftovers) are all done. Scope settled with the user |
@@ -30,8 +30,8 @@ no waybar/hypridle/hyprpaper autostart, no lock bind. Consequences for this plan
 | 1 Lua port | ✅ Shipped | `8464c90` | hyprland.lua + lua/{core,extras}; monitors template + host-init; .zlogin `--locked-cmd`; hypridle Lua dispatch; CI asserts; palette fix. Static checks pass on 0.57.2 (both tiers, core-only, monitors absent/present/broken, sandbox stow + CI script) |
 | 2 Hypr apps, packages, fonts (8–15b) | ✅ Shipped | `b89e5c8` | hyprlauncher/hyprshutdown/hyprpicker/hyprpwcenter/hyprpolkitagent wired in; wofi, pavucontrol and the sink-cycle script removed; `hyprtoolkit.conf`; Adwaita cursor declared; `fontconfig` package; `_pkgs_base` updated. Static checks + sandbox CI pass. No `hyprlauncher.conf`: it has no font/colour options, the theme comes from hyprtoolkit.conf |
 | 3 Docs | ✅ Shipped | `5f72b3e` | README + guides/host-config.md: boot model via `--locked-cmd`, Lua layout/tiers/autostart, monitors template, waybar-only autodetect |
-| 3b PR for review | ✅ Reviewed | see next commit | [PR #42](https://github.com/anotherjson/anotherdot/pull/42). `/code-review` (xhigh) returned 9 findings; 8 fixed (reboot/poweroff issued from inside the session, empty-choice guards, `HYPR_TIERS` parsing, host-init refuses a folded `~/.config/hypr`, Super+Shift+Ctrl+M → hyprshutdown, pipewire-pulse dropped as an easyeffects dep, one `config_home` helper, `u.each` in the entry file); 1 kept by decision (sans/serif → FiraCode). Ready for Phase 4 |
-| 4 Test in ~/.dotfiles, then merge | 🔄 Testing | — | Deployed 2026-11-09 (detached at `3fd481b`), rebooted into it via gdm. Automated checks pass: config loaded from `hyprland.lua`, all 8 autostart processes, 58 binds, eDP-1 scale 2 from the local monitors.lua, dpms dispatch, fonts/gsettings/cursor env, all links. swaync files were lost to a bad step-17 `rm` and restored (see step 17). Interactive items (power menu, polkit, core-only, theme) pending `[user]` |
+| 3b PR for review | ✅ Merged | PR #42 → `main` `a30dc0d` (rebase) | [PR #42](https://github.com/anotherjson/anotherdot/pull/42). `/code-review` (xhigh) returned 9 findings; 8 fixed (reboot/poweroff issued from inside the session, empty-choice guards, `HYPR_TIERS` parsing, host-init refuses a folded `~/.config/hypr`, Super+Shift+Ctrl+M → hyprshutdown, pipewire-pulse dropped as an easyeffects dep, one `config_home` helper, `u.each` in the entry file); 1 kept by decision (sans/serif → FiraCode). Ready for Phase 4 |
+| 4 Test in ~/.dotfiles, then merge | ✅ Complete | merged 2026-11-09 | Deployed via detached checkout, rebooted through gdm; all automated checks passed (config source, 8 autostart processes, 58 binds, eDP-1 scale 2 from local monitors.lua, dpms, fonts/gsettings/cursor, links) and the user confirmed the interactive items (power menu, polkit, core-only mode, theme). swaync files lost to a bad step-17 `rm` were restored (see step 17). PR #42 rebase-merged; `~/.dotfiles` back on `main`. Step 19 (`yay -Rns wofi pavucontrol`) pending `[user]` |
 | 5 Laptop gdm → autologin + hyprlock | ⏳ Pending | — | `[user]`, after merge and once Lua is stable; test `--locked-cmd` from a TTY first |
 | Follow-ups (GNOME, waybar cleanup) | 🗂 Deferred | — | separate branches |
 
