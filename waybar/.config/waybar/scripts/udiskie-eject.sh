@@ -9,7 +9,9 @@ items=()
 for m in "${mounts[@]}"; do items+=("$(basename "$m")"); done
 items+=("(eject all)")
 
-choice=$(printf '%s\n' "${items[@]}" | hyprlauncher -m) || exit 0
+choice=$(printf '%s\n' "${items[@]}" | hyprlauncher -m --quiet)
+# Esc prints this on stdout and exits 0 (hyprlauncher 0.1.7), so match it, don't rely on $?.
+[ "$choice" != "Exited without selection" ] || exit 0
 
 if [ "$choice" = "(eject all)" ]; then
     udiskie-umount --all
