@@ -12,7 +12,7 @@ just bootstrap <base|production|gaming|all>
 
 | Type         | System packages                                                | Stow packages                          |
 |--------------|----------------------------------------------------------------|----------------------------------------|
-| `base`       | Hyprland WM stack, terminals, editor, shell, audio, theme/font | hypr, waybar, wofi, kitty, wezterm, nvim, zsh, starship, gtk, udiskie, backgrounds |
+| `base`       | Hyprland WM stack, terminals, editor, shell, audio, theme/font | hypr, waybar, fontconfig, kitty, wezterm, nvim, zsh, starship, gtk, udiskie, backgrounds |
 | `production` | `base` + firefox, nautilus, darktable, opencode                | base + gemini, opencode                |
 | `gaming`     | `base` + steam (strict — no firefox/claude/gemini/opencode)    | base                                   |
 | `all`        | union of production + gaming                                   | base + gemini, opencode                |

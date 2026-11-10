@@ -15,9 +15,9 @@ Each top-level directory is a stow package mirroring its target path inside
 
 | Package | Configures |
 |---|---|
-| `hypr` | Hyprland window manager — keybinds, idle/lock, scripts |
+| `hypr` | Hyprland (Lua config) — binds, idle/lock, launcher + hyprtoolkit theme, scripts |
 | `waybar` | Status bar |
-| `wofi` | App launcher / power menu |
+| `fontconfig` | Default font families: FiraCode Nerd Font with Noto fallbacks |
 | `kitty` | Terminal (primary) |
 | `wezterm` | Terminal (alternate) |
 | [`nvim`](nvim/README.md) | Neovim |
@@ -44,10 +44,12 @@ Platform-specific setup quicknotes live in [`guides/`](guides/):
 
 All apps share the [Solarized Osaka] palette — pinned upstream by
 `craftzdog/solarized-osaka.nvim` for nvim, mirrored by hand into kitty, wezterm,
-waybar, wofi, swaync, gtk, and firefox userChrome. Window transparency is set
-via Hyprland `windowrule = opacity` (not per-app rgba), since most apps don't
-composite alpha through to the desktop. Font is FiraCode Nerd Font everywhere
-for glyph parity in waybar/wofi/kitty.
+waybar, swaync, gtk, the hyprtoolkit apps (`hyprtoolkit.conf`), and firefox
+userChrome. Window transparency is set via Hyprland window rules (`opacity`),
+not per-app rgba, since most apps don't composite alpha through to the desktop.
+Font is FiraCode Nerd Font everywhere: the `fontconfig` package maps the generic
+families to it (Noto fills in missing scripts, CJK and emoji), and waybar, kitty
+and hyprlock pin it explicitly.
 
 ## Bootstrap
 

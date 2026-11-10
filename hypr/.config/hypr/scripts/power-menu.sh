@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Power menu through hyprlauncher's dmenu mode (the `hyprlauncher -d` daemon from autostart must be running).
 set -euo pipefail
 
 choice=$(printf '%s\n'  \
@@ -8,13 +9,14 @@ choice=$(printf '%s\n'  \
     "  Logout"           \
     "  Reboot"           \
     "  Shutdown"         \
-    | wofi --dmenu --prompt "power" --cache-file /dev/null)
+    | hyprlauncher -m) || exit 0
 
 case "${choice##* }" in
     Lock)      loginctl lock-session ;;
     Suspend)   systemctl suspend ;;
     Hibernate) systemctl hibernate ;;
-    Logout)   hyprctl dispatch exit ;;
-    Reboot)   systemctl reboot ;;
-    Shutdown) systemctl poweroff ;;
+    Logout)    hyprshutdown ;;
+    Reboot)    hyprshutdown --post-cmd 'systemctl reboot' ;;
+    Shutdown)  hyprshutdown --post-cmd 'systemctl poweroff' ;;
+    *)         exit 0 ;;  # cancelled ("Exited without selection") or unknown entry
 esac

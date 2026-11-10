@@ -131,13 +131,14 @@ restow package:
 # updated via yay -S --needed.
 # Package bundles per type. Add new packages here.
 _pkgs_base := "hyprland hyprlock hypridle hyprpaper xdg-desktop-portal-hyprland " + \
-              "waybar wofi swaync " + \
-              "pipewire wireplumber pavucontrol libnotify " + \
+              "waybar swaync hyprlauncher hyprpolkitagent hyprpicker hyprpwcenter hyprshutdown " + \
+              "pipewire pipewire-pulse wireplumber libnotify wl-clipboard " + \
               "easyeffects lsp-plugins-lv2 " + \
               "kitty wezterm neovim zsh starship " + \
               "brightnessctl playerctl hyprshot " + \
               "eza jq curl arch-update " + \
-              "adw-gtk-theme ttf-firacode-nerd " + \
+              "qt5-wayland qt6-wayland " + \
+              "adw-gtk-theme adwaita-cursors ttf-firacode-nerd noto-fonts noto-fonts-emoji noto-fonts-cjk " + \
               "stow just git " + \
               "udiskie exfatprogs"
 
@@ -248,7 +249,7 @@ host-init:
 stow-bundle type="base":
     #!/usr/bin/env bash
     set -euo pipefail
-    base="hypr waybar wofi kitty wezterm nvim zsh starship gtk udiskie backgrounds easyeffects wireplumber"
+    base="hypr waybar fontconfig kitty wezterm nvim zsh starship gtk udiskie backgrounds easyeffects wireplumber"
     case "{{type}}" in
         base|gaming)    pkgs="$base";;
         production|all) pkgs="$base gemini opencode";;

@@ -3,4 +3,7 @@ local p, u = require("lua.programs"), require("lua.util")
 
 u.start_all({
   p.idle,
+  p.polkit,
+  p.notifications,
+  p.launcher,
 })

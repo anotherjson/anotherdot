@@ -33,6 +33,7 @@ u.bind_all("SUPER", u.concat({
   { "W",                   exec(p.screenshot .. " -m window") },
   { "M",                   exec(p.screenshot .. " -m output") },
   { "R",                   exec(p.screenshot .. " -m region") },
+  { "SHIFT + C",           exec(p.picker) },
   { "B",                   exec(p.bar_reload) },
   { "SHIFT + E",           exec(p.power_menu) },
   { "N",                   exec(p.notify .. " -t -sw") },

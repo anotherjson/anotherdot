@@ -161,9 +161,8 @@
             "car": "",
             "default": ["", "", ""]
         },
-        "on-click": "~/.config/waybar/scripts/cycle_audio_sink.sh",
-        "on-click-right": "pavucontrol",
-        "on-click-middle": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+        "on-click": "hyprpwcenter",
+        "on-click-middle": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
     },
     // "custom/media": {
     //     "format": "{icon} {text}",
