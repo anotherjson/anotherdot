@@ -38,7 +38,7 @@ The preset file is deployed by stow but EasyEffects does **not** auto-apply it:
 2. **Presets** (bottom-left) → load **`wave3-voice`**
 
 This is a **one-time** step per machine. The Hyprland autostart runs
-`easyeffects --service-mode` (see `hypr/.config/hypr/hyprland.conf`), which keeps
+`easyeffects --service-mode` (see `hypr/.config/hypr/lua/programs.lua`), which keeps
 the last-loaded preset active across reboots — but it does **not** perform this
 first load itself.
 
