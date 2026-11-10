@@ -2,19 +2,23 @@
 -- Everything else lives under lua/ (layout and troubleshooting: guides/host-config.md).
 --
 -- Broken desktop? From a TTY:  HYPR_TIERS=core start-hyprland   (skips lua/extras/)
-local tiers = os.getenv("HYPR_TIERS") or "core,extras"
+local u = require("lua.util")
 
-for tier in tiers:gmatch("[^,]+") do
+local default_tiers = "core,extras"
+local requested = u.split(os.getenv("HYPR_TIERS"), ",")
+local tiers = #requested > 0 and requested or u.split(default_tiers, ",") -- empty/unset → default
+
+u.each(tiers, function(tier)
   require("./lua/" .. tier .. "/*") -- wildcards need the path form; "lua.core.*" does not resolve
-end
+end)
 
 -- Monitors are machine-local and untracked: ~/.config/hypr/monitors.lua, seeded from
 -- hosts/hypr/monitors.lua.template by `just host-init`. Loaded by absolute path because a
 -- relative require resolves from this file's real (stow) location, not from ~/.config/hypr.
 -- No file → Hyprland's defaults (preferred / auto / auto). A broken file is still reported.
-local config_home = os.getenv("XDG_CONFIG_HOME") or (os.getenv("HOME") .. "/.config")
-local monitors = io.open(config_home .. "/hypr/monitors.lua", "r")
+local monitors_path = u.config_home() .. "/hypr/monitors"
+local monitors = io.open(monitors_path .. ".lua", "r")
 if monitors then
   monitors:close()
-  require(config_home .. "/hypr/monitors")
+  require(monitors_path)
 end

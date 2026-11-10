@@ -24,7 +24,7 @@ u.bind_all("SUPER", u.concat({
   { "T",                   exec(p.terminal) },
   { "Q",                   hl.dsp.window.close() },
   { "SHIFT + Q",           exec(p.lock) },
-  { "SHIFT + CONTROL + M", hl.dsp.exit() },
+  { "SHIFT + CONTROL + M", exec("hyprshutdown") }, -- closes apps first; hl.dsp.exit() would kill them
   { "F",                   exec(p.files) },
   { "space",               exec(p.menu) },
   { "apostrophe",          hl.dsp.window.float({ action = "toggle" }) },

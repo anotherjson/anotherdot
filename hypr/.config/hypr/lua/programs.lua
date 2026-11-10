@@ -1,6 +1,5 @@
 -- Every external program the config launches, by role. Swap a tool here, not in binds/autostart.
-local config_home = os.getenv("XDG_CONFIG_HOME") or (os.getenv("HOME") .. "/.config")
-local scripts = config_home .. "/hypr/scripts"
+local scripts = require("lua.util").config_home() .. "/hypr/scripts"
 
 return {
   terminal   = scripts .. "/kitty-cwd.sh", -- kitty in the focused window's cwd; plain kitty otherwise

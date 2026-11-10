@@ -1,6 +1,18 @@
 -- Small functional helpers shared by every module.
 local M = {}
 
+-- Split on `sep`, trimming whitespace and dropping empty tokens.
+function M.split(str, sep)
+  local out = {}
+  for token in (str or ""):gmatch("[^" .. sep .. "%s]+") do out[#out + 1] = token end
+  return out
+end
+
+-- ~/.config (or $XDG_CONFIG_HOME). Used for the machine-local monitors file and the scripts dir.
+function M.config_home()
+  return os.getenv("XDG_CONFIG_HOME") or ((os.getenv("HOME") or "") .. "/.config")
+end
+
 function M.range(from, to)
   local out = {}
   for i = from, to do out[#out + 1] = i end
