@@ -64,8 +64,9 @@ just bootstrap
 
 Defaults to the `base` bundle. Pass `production`, `gaming`, or `all` as a
 positional argument to install more — e.g. `just bootstrap all`. See
-[`guides/host-config.md`](guides/host-config.md) for what each bundle includes
-and how the laptop/desktop autodetect works.
+[`guides/host-config.md`](guides/host-config.md) for what each bundle includes,
+how the machine-local monitor file and the waybar autodetect work, and the
+layout of the Hyprland Lua config.
 
 Bootstrap also makes a few system-level changes after the package install:
 sets the login shell to zsh, enables `udisks2` (for the udiskie automount
